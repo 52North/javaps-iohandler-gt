@@ -1,0 +1,392 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<groupId>org.n52.wps</groupId>
+		<artifactId>javaPS</artifactId>
+		<version>1.1.2-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.n52.geoprocessing</groupId>
+	<artifactId>javaps-iohandler-gt</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>javaPS Input-/Outputhandler with GeoTools</name>
+
+	<inceptionYear>20165</inceptionYear>
+
+	<developers>
+		<developer>
+			<id>bpross-52n</id>
+			<name>Benjamin Pross</name>
+			<email>b.pross@52north.org</email>
+			<organization>${project.organization.name}</organization>
+			<organizationUrl>${project.organization.url}</organizationUrl>
+			<timezone>GMT+1</timezone>
+		</developer>
+	</developers>
+
+	<packaging>jar</packaging>
+
+	<!-- <mailingLists> -->
+	<!-- <mailingList> -->
+	<!-- <name>Sensor Web Community Mailing List</name> -->
+	<!-- <subscribe>http://list.52north.org/mailman/listinfo/swe</subscribe> -->
+	<!-- <unsubscribe>http://list.52north.org/mailman/listinfo/swe</unsubscribe> -->
+	<!-- <post>swe@52north.org</post> -->
+	<!-- <archive>http://list.52north.org/pipermail/swe</archive> -->
+	<!-- <otherArchives> -->
+	<!-- <otherArchive>http://sensorweb.forum.52north.org</otherArchive> -->
+	<!-- </otherArchives> -->
+	<!-- </mailingList> -->
+	<!-- </mailingLists> -->
+
+	<scm>
+		<url>https://github.com/52North/wps-backends</url>
+		<connection>scm:git:https://github.com/52North/wps-backends.git</connection>
+		<developerConnection>scm:git:https://github.com/52North/wps-backends.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<issueManagement>
+		<system>GitHub issues</system>
+		<url>https://github.com/52North/wps-backends/issues?state=open</url>
+	</issueManagement>
+
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/52North/wps-backends</url>
+	</ciManagement>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
+		<version.java>1.8</version.java>
+		<geotools.version>13.5</geotools.version>
+		<version.slf4j>1.7.21</version.slf4j>
+		<version.log4j>2.3</version.log4j>
+		<version.arctic.sea>5.2.0-SNAPSHOT</version.arctic.sea>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.n52.wps</groupId>
+			<artifactId>engine</artifactId>
+			<version>1.1.2-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.geoprocessing</groupId>
+			<artifactId>javaps-iohandler</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.vividsolutions</groupId>
+			<artifactId>jts</artifactId>
+			<version>1.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.googlecode.efficient-java-matrix-library/ejml -->
+		<dependency>
+			<groupId>com.googlecode.efficient-java-matrix-library</groupId>
+			<artifactId>core</artifactId>
+			<version>0.26</version>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- START import geotools dependencies -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.geotools</groupId> -->
+		<!-- <artifactId>geotools</artifactId> -->
+		<!-- <version>${geotools.version}</version> -->
+		<!-- <type>pom</type> -->
+		<!-- <scope>import</scope> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-main</artifactId>
+			<version>${geotools.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jts</artifactId>
+					<groupId>com.vividsolutions</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools.xsd</groupId>
+			<artifactId>gt-xsd-gml3</artifactId>
+			<version>${geotools.version}</version>
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <groupId>org.geotools</groupId> -->
+			<!-- <artifactId>gt-coverage</artifactId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-referencing</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geojson</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools.xsd</groupId>
+			<artifactId>gt-xsd-core</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>gt-epsg-hsql</artifactId>
+			<groupId>org.geotools</groupId>
+			<version>${geotools.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geotiff</artifactId>
+			<version>${geotools.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.vividsolutions</groupId>
+					<artifactId>jts</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-metadata</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<!-- <dependency> <groupId>org.geotools.xsd</groupId> <artifactId>gt-xsd-kml</artifactId> 
+			<version>${geotools.version}</version> </dependency> <dependency> <groupId>org.geotools</groupId> 
+			<artifactId>gt-xml</artifactId> <version>${geotools.version}</version> </dependency> 
+			<dependency> <groupId>org.geotools</groupId> <artifactId>gt-geotiff</artifactId> 
+			<version>${geotools.version}</version> </dependency> <dependency> <groupId>org.geotools</groupId> 
+			<artifactId>gt-epsg-hsql</artifactId> <version>${geotools.version}</version> 
+			</dependency> <dependency> <groupId>org.geotools</groupId> <artifactId>gt-metadata</artifactId> 
+			<version>${geotools.version}</version> </dependency> <dependency> <groupId>org.geotools</groupId> 
+			<artifactId>gt-geojson</artifactId> <version>${geotools.version}</version> 
+			</dependency> <dependency> <groupId>org.geotools</groupId> <artifactId>gt-coverage</artifactId> 
+			<version>${geotools.version}</version> <exclusions> <exclusion> <artifactId>jts</artifactId> 
+			<groupId>com.vividsolutions</groupId> </exclusion> </exclusions> </dependency> 
+			<dependency> <groupId>org.geotools</groupId> <artifactId>gt-arcgrid</artifactId> 
+			<version>${geotools.version}</version> </dependency> -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-arcgrid</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-opengis</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools.xsd</groupId>
+			<artifactId>gt-xsd-gml2</artifactId>
+			<version>${geotools.version}</version>
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <groupId>org.geotools</groupId> -->
+			<!-- <artifactId>gt-coverage</artifactId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-api</artifactId>
+			<version>${geotools.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jts</artifactId>
+					<groupId>com.vividsolutions</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools.xsd</groupId>
+			<artifactId>gt-xsd-kml</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<!-- END import geotools dependencies -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>xalan</groupId> -->
+<!-- 			<artifactId>xalan</artifactId> -->
+<!-- 			<version>2.7.1</version> -->
+<!-- 			<exclusions> -->
+<!-- 				<exclusion> -->
+<!-- 					<artifactId>xml-apis</artifactId> -->
+<!-- 					<groupId>xml-apis</groupId> -->
+<!-- 				</exclusion> -->
+<!-- 			</exclusions> -->
+<!-- 		</dependency> -->
+		<dependency>
+			<groupId>org.n52.arctic-sea</groupId>
+			<artifactId>shetland</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.arctic-sea</groupId>
+			<artifactId>janmayen</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.arctic-sea</groupId>
+			<artifactId>iceland</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.arctic-sea</groupId>
+			<artifactId>faroe</artifactId>
+			<version>${version.arctic.sea}</version>
+		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<artifactId>faroe-annotations</artifactId> -->
+<!-- 			<groupId>org.n52.arctic-sea</groupId> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<artifactId>faroe-utils</artifactId> -->
+<!-- 			<groupId>org.n52.arctic-sea</groupId> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>commons-codec</groupId> -->
+<!-- 			<artifactId>commons-codec</artifactId> -->
+<!-- 		</dependency> -->
+		<dependency>
+			<artifactId>stax-api</artifactId>
+			<groupId>stax</groupId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<artifactId>httpcore</artifactId>
+			<groupId>org.apache.httpcomponents</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>javax.inject</artifactId>
+			<groupId>javax.inject</groupId>
+		</dependency>
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${version.spring}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>java3d</groupId>
+			<artifactId>vecmath</artifactId>
+			<version>1.3.2</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.geoprocessing</groupId>
+			<artifactId>javaps-jts-backend</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-coverage</artifactId>
+			<version>13.5</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jts</artifactId>
+					<groupId>com.vividsolutions</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.media</groupId>
+			<artifactId>jai_core</artifactId>
+			<version>1.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<compilerVersion>${version.java}</compilerVersion>
+					<source>${version.java}</source>
+					<target>${version.java}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
