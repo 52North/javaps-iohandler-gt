@@ -20,14 +20,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/util
-                           http://www.springframework.org/schema/util/spring-util-4.1.xsd">
+                           http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-<!--     <bean id="abstractpropertiesinputoutputhandlerforfiles" class="org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles" /> -->
-    <bean id="gthelper" class="org.n52.javaps.gt.io.GTHelper" />
+    <mvc:annotation-driven />
 
+	<bean id="gtHelper" class="org.n52.javaps.gt.io.GTHelper" />
     <bean id="genericfiledatawithgtparser" class="org.n52.javaps.gt.io.datahandler.parser.GenericFileDataWithGTParser" />
     <bean id="genericrasterfileparser" class="org.n52.javaps.gt.io.datahandler.parser.GenericRasterFileParser" />
     <bean id="geojsonparser" class="org.n52.javaps.gt.io.datahandler.parser.GeoJSONParser" />
@@ -52,6 +53,25 @@
     <bean id="gtbinzippedshpgenerator" class="org.n52.javaps.gt.io.datahandler.generator.GTBinZippedSHPGenerator" />
     <bean id="kmlgenerator" class="org.n52.javaps.gt.io.datahandler.generator.KMLGenerator" />
     <bean id="gtbindirectoryshpgenerator" class="org.n52.javaps.gt.io.datahandler.generator.GTBinDirectorySHPGenerator" />
+<!--     <bean id="settingsService" class="org.n52.faroe.SettingsServiceImpl" /> -->
+
+<!--     <bean id="eventBus" class="org.n52.janmayen.event.EventBus"> -->
+<!--         <property name="async" value="false" /> -->
+<!--     </bean> -->
+<!--     <bean id="settingValueFactory" class="org.n52.faroe.json.JsonSettingValueFactory" /> -->
+<!--     <bean id="adminUserService" class="org.n52.iceland.config.AdminUserServiceImpl" /> -->
+<!--     <bean id="settingsEncoder" class="org.n52.faroe.json.JsonSettingsEncoder" /> -->
+<!--     <bean id="activationService" class="org.n52.iceland.config.ActivationService" /> -->
+<!--     <bean id="activationDao" class="org.n52.iceland.config.json.JsonActivationDao" /> -->
+<!--     <bean id="settingsDao" class="org.n52.faroe.json.JsonSettingsDao" /> -->
+<!--     <bean id="adminUserDao" class="org.n52.iceland.config.json.JsonAdminUserDao" /> -->
+
+<!--     <bean id="jsonConfiguration" class="org.n52.faroe.json.JsonConfiguration" init-method="init"> -->
+<!--         <property name="fileName" value="configuration.json" /> -->
+<!--         <property name="writeTimeout" value="1000" /> -->
+<!--         <property name="configLocationProvider" ref="configLocationProvider"/> -->
+<!--     </bean> -->
+<!--     <bean id="configLocationProvider" class="org.n52.iceland.service.ServletConfigLocationProvider" /> -->
 <!--     <bean id="abstractgeoserverwxsgenerator" class="org.n52.javaps.gt.io.datahandler.generator.AbstractGeoserverWXSGenerator" /> -->
 <!--     <bean id="geoserverwmsgenerator" class="org.n52.javaps.gt.io.datahandler.generator.GeoserverWMSGenerator" /> -->
 <!--     <bean id="geoserverwfsgenerator" class="org.n52.javaps.gt.io.datahandler.generator.GeoserverWFSGenerator" /> -->

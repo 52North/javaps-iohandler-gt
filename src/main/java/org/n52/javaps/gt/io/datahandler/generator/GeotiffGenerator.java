@@ -66,6 +66,7 @@ import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessOutputDescription;
 import org.n52.javaps.gt.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
+import org.n52.javaps.gt.io.util.FileConstants;
 import org.n52.javaps.io.Data;
 import org.n52.javaps.io.EncodingException;
 import org.n52.javaps.io.OutputHandler;
@@ -111,13 +112,7 @@ public class GeotiffGenerator extends AbstractPropertiesInputOutputHandlerForFil
         try {
             geoTiffWriter.write(coverage, (GeneralParameterValue[]) paramWrite.values().toArray(
                     new GeneralParameterValue[1]));
-        } catch (IllegalArgumentException e1) {
-            LOGGER.error(e1.getMessage(), e1);
-            throw new RuntimeException(e1);
-        } catch (IndexOutOfBoundsException e1) {
-            LOGGER.error(e1.getMessage(), e1);
-            throw new RuntimeException(e1);
-        } catch (IOException e1) {
+        } catch (IllegalArgumentException | IndexOutOfBoundsException | IOException e1) {
             LOGGER.error(e1.getMessage(), e1);
             throw new RuntimeException(e1);
         }
@@ -134,8 +129,7 @@ public class GeotiffGenerator extends AbstractPropertiesInputOutputHandlerForFil
 
             GridCoverage coverage = ((GTRasterDataBinding) data).getPayload();
             GeoTiffWriter geoTiffWriter = null;
-            String tmpDirPath = System.getProperty("java.io.tmpdir");
-            String fileName = tmpDirPath + File.separatorChar + "temp" + UUID.randomUUID() + ".tmp";
+            String fileName = FileConstants.TMP_DIR_PATH + File.separatorChar + "temp" + UUID.randomUUID() + FileConstants.dot(FileConstants.SUFFIX_TMP);
             File outputFile = new File(fileName);
             this.finalizeFiles.add(outputFile);
 

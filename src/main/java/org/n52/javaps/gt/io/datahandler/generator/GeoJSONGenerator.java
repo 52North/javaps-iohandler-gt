@@ -55,14 +55,15 @@ import java.io.InputStream;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
-import org.n52.geoprocessing.jts.io.data.binding.complex.JTSGeometryBinding;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessOutputDescription;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
+import org.n52.javaps.gt.io.util.FileConstants;
 import org.n52.javaps.io.Data;
 import org.n52.javaps.io.EncodingException;
 import org.n52.javaps.io.OutputHandler;
+import org.n52.javaps.io.data.binding.complex.JTSGeometryBinding;
 import org.n52.shetland.ogc.wps.Format;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -89,13 +90,13 @@ public class GeoJSONGenerator extends AbstractPropertiesInputOutputHandlerForFil
             Data<?> data,
             Format format) throws IOException, EncodingException {
 
-        File tempFile = File.createTempFile("wps", "json");
+        File tempFile = File.createTempFile("wps", FileConstants.dot(FileConstants.SUFFIX_JSON));
 
         if (data instanceof JTSGeometryBinding) {
-            
+
             Geometry g = ((JTSGeometryBinding) data).getPayload();
-            
-            finalizeFiles.add(tempFile); 
+
+            finalizeFiles.add(tempFile);
 
             new GeometryJSON().write(g, tempFile);
 
@@ -106,7 +107,7 @@ public class GeoJSONGenerator extends AbstractPropertiesInputOutputHandlerForFil
 
             SimpleFeatureCollection f = (SimpleFeatureCollection) data.getPayload();
 
-            finalizeFiles.add(tempFile); 
+            finalizeFiles.add(tempFile);
 
             new FeatureJSON().writeFeatureCollection(f, tempFile);
 

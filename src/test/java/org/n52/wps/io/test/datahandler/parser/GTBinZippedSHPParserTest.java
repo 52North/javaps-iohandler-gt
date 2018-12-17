@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
+/*
+ * Copyright (C) 2007 - 2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,60 +45,62 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.javaps.gt.io.datahandler.generator;
+package org.n52.wps.io.test.datahandler.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
-import javax.inject.Inject;
+import org.junit.Assert;
+import org.junit.Test;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.datahandler.parser.GTBinZippedSHPParser;
+import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
-import org.n52.javaps.annotation.Properties;
-import org.n52.javaps.description.TypedProcessOutputDescription;
-import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.javaps.io.AbstractPropertiesInputOutputHandler;
-import org.n52.javaps.io.Data;
-import org.n52.javaps.io.EncodingException;
-import org.n52.javaps.io.OutputHandler;
-import org.n52.javaps.utils.IOUtils;
-import org.n52.shetland.ogc.wps.Format;
+public class GTBinZippedSHPParserTest extends AbstractTestCase<GTBinZippedSHPParser>{
 
-/**
- *
- * @author victorzinho; Matthias Mueller, TU Dresden
- */
-@Properties(
-        defaultPropertyFileName = "gtbinzippedshphandler.default.properties",
-        propertyFileName = "gtbinzippedshpgenerator.properties")
-public class GTBinZippedSHPGenerator extends AbstractPropertiesInputOutputHandler implements OutputHandler {
+    @Test
+    public void testParser(){
 
-    @Inject
-    private GTBinDirectorySHPGenerator directoryShp;
-
-    public GTBinZippedSHPGenerator() {
-        super();
-        addSupportedBinding(GTVectorDataBinding.class);
-    }
-
-    private File createZippedShapefile(File shapeDirectory) throws IOException {
-        if (shapeDirectory != null && shapeDirectory.isDirectory()) {
-            File[] files = shapeDirectory.listFiles();
-            return IOUtils.zip(files);
+        if(!isDataHandlerActive()){
+            return;
         }
 
-        return null;
+        String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/tasmania_roads.zip";
+
+        try {
+            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            Assert.fail(e1.getMessage());
+        }
+
+        String[] mimetypes = dataHandler.getSupportedFormats();
+
+        InputStream input = null;
+
+        for (String mimetype : mimetypes) {
+
+            try {
+                input = new FileInputStream(new File(testFilePath));
+            } catch (FileNotFoundException e) {
+                Assert.fail(e.getMessage());
+            }
+
+            GTVectorDataBinding theBinding = dataHandler.parse(input, mimetype, "");
+
+            Assert.assertNotNull(theBinding.getPayload());
+            Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
+            Assert.assertTrue(!theBinding.getPayload().isEmpty());
+        }
+
     }
 
     @Override
-    public InputStream generate(TypedProcessOutputDescription<?> description,
-            Data<?> data,
-            Format format) throws IOException, EncodingException {
-
-        InputStream stream = new FileInputStream(createZippedShapefile(directoryShp.writeFeatureCollectionToDirectory(
-                data)));
-
-        return stream;
+    protected void initializeDataHandler() {
+        dataHandler = new GTBinZippedSHPParser();
     }
 
 }

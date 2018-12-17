@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
+/*
+ * Copyright (C) 2007 - 2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,60 +45,54 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.javaps.gt.io.datahandler.generator;
+package org.n52.wps.io.test.datahandler.parser;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
-import javax.inject.Inject;
-
-import org.n52.javaps.annotation.Properties;
-import org.n52.javaps.description.TypedProcessOutputDescription;
-import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.javaps.io.AbstractPropertiesInputOutputHandler;
-import org.n52.javaps.io.Data;
-import org.n52.javaps.io.EncodingException;
-import org.n52.javaps.io.OutputHandler;
-import org.n52.javaps.utils.IOUtils;
-import org.n52.shetland.ogc.wps.Format;
+import org.junit.Assert;
+import org.junit.Test;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
+import org.n52.wps.io.datahandler.parser.GML2BasicParser4Files;
+import org.n52.wps.io.test.datahandler.AbstractTestCase;
+import org.n52.wps.webapp.api.FormatEntry;
 
 /**
+ * This class is for testing the GML2BasicParser4Files.
  *
- * @author victorzinho; Matthias Mueller, TU Dresden
+ * @author Benjamin Pross(bpross-52n)
+ *
  */
-@Properties(
-        defaultPropertyFileName = "gtbinzippedshphandler.default.properties",
-        propertyFileName = "gtbinzippedshpgenerator.properties")
-public class GTBinZippedSHPGenerator extends AbstractPropertiesInputOutputHandler implements OutputHandler {
+public class GML2BasicParser4FilesTest extends
+        AbstractTestCase<GML2BasicParser4Files> {
 
-    @Inject
-    private GTBinDirectorySHPGenerator directoryShp;
+    @Test
+    public void testParser() {
 
-    public GTBinZippedSHPGenerator() {
-        super();
-        addSupportedBinding(GTVectorDataBinding.class);
-    }
-
-    private File createZippedShapefile(File shapeDirectory) throws IOException {
-        if (shapeDirectory != null && shapeDirectory.isDirectory()) {
-            File[] files = shapeDirectory.listFiles();
-            return IOUtils.zip(files);
+        if (!isDataHandlerActive()) {
+            return;
         }
 
-        return null;
+        List<FormatEntry> formats = dataHandler.getSupportedFullFormats();
+
+        FormatEntry format = formats.get(0);
+
+        String mimeType = format.getMimeType();
+        String schema = format.getSchema();
+
+        InputStream input = getClass().getResourceAsStream("/tasmania_roads_gml2.xml");
+
+        GenericFileDataWithGTBinding theBinding = dataHandler.parse(input, mimeType,
+                schema);
+
+        Assert.assertNotNull(theBinding.getPayload());
+        Assert.assertNotNull(theBinding.getPayload().getBaseFile(true).exists());
+
     }
 
     @Override
-    public InputStream generate(TypedProcessOutputDescription<?> description,
-            Data<?> data,
-            Format format) throws IOException, EncodingException {
-
-        InputStream stream = new FileInputStream(createZippedShapefile(directoryShp.writeFeatureCollectionToDirectory(
-                data)));
-
-        return stream;
+    protected void initializeDataHandler() {
+        dataHandler = new GML2BasicParser4Files();
     }
 
 }

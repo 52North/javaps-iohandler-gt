@@ -201,16 +201,16 @@ public class GenericFileDataWithGT {
 
         try {
             GeotiffGenerator generator = new GeotiffGenerator();
-            
+
             primaryFile = File.createTempFile("primary", ".tif");
-            
+
             FileOutputStream outputStream = new FileOutputStream(primaryFile);
 
             InputStream is = generator.generate(null, new GTRasterDataBinding(payload), new Format().withMimeType(
                     mimeType));
-            
+
             IOUtils.copy(is, outputStream);
-            
+
             is.close();
 
         } catch (IOException | EncodingException e) {
@@ -274,9 +274,9 @@ public class GenericFileDataWithGT {
                             geo = new GeometryAttributeImpl((Object) g, newGeometryDescriptor, identifier);
                             sf.setDefaultGeometryProperty(geo);
                             sf.setDefaultGeometry(g);
-                        } 
+                        }
                         // TODO: implement other cases
-                        
+
                         if (geo != null) {
                             builder.add(geo.getName().getLocalPart(), geo.getType().getBinding());
                         }
@@ -386,7 +386,7 @@ public class GenericFileDataWithGT {
                 LOGGER.error(message);
                 throw new RuntimeException(message);
             }
-            
+
             FileOutputStream fos = new FileOutputStream(currentFile);
 
             IOUtils.copy(zipInputStream, fos);

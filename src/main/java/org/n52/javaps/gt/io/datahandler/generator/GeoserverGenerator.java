@@ -38,6 +38,7 @@ import org.n52.javaps.gt.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.javaps.gt.io.data.binding.complex.ShapefileBinding;
+import org.n52.javaps.gt.io.util.FileConstants;
 import org.n52.javaps.io.AbstractPropertiesInputOutputHandler;
 import org.n52.javaps.io.Data;
 import org.n52.javaps.io.EncodingException;
@@ -118,7 +119,7 @@ public class GeoserverGenerator extends AbstractPropertiesInputOutputHandler imp
 
             // zip shp file
             String path = file.getAbsolutePath();
-            String baseName = path.substring(0, path.length() - ".shp".length());
+            String baseName = path.substring(0, path.length() - FileConstants.dot(FileConstants.SUFFIX_SHP).length());
             File shx = new File(baseName + ".shx");
             File dbf = new File(baseName + ".dbf");
             File prj = new File(baseName + ".prj");
@@ -131,7 +132,7 @@ public class GeoserverGenerator extends AbstractPropertiesInputOutputHandler imp
             GTRasterDataBinding gtData = (GTRasterDataBinding) coll;
 
             try {
-                file = File.createTempFile("primary", ".tif");
+                file = File.createTempFile("primary", FileConstants.dot(FileConstants.SUFFIX_TIF));
                 FileOutputStream outputStream = new FileOutputStream(file);
 
                 InputStream is = geotiffGenerator.generate(null, gtData, null);

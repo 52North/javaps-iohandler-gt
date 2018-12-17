@@ -51,11 +51,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.xml.namespace.QName;
 
 import org.geotools.data.collection.ListFeatureCollection;
@@ -65,7 +65,9 @@ import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.referencing.CRS;
-import org.n52.faroe.SettingsService;
+import org.n52.faroe.Validation;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.service.ServiceSettings;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -90,13 +92,23 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
+@Configurable
 public class GTHelper {
     private static Logger LOGGER = LoggerFactory.getLogger(GTHelper.class);
 
-    @Inject
-    private SettingsService settingsService;
+    private String serviceURL;
 
     private static final String GEOMETRY_NAME = "the_geom";
+
+    @Setting(ServiceSettings.SERVICE_URL)
+    public void setServiceURL(URI serviceURL) {
+        Validation.notNull("serviceURL", serviceURL);
+        String url = serviceURL.toString();
+        if (url.contains("?")) {
+            url = url.split("[?]")[0];
+        }
+        this.serviceURL = url;
+    }
 
     public SimpleFeatureType createFeatureType(Collection<Property> attributes,
             Geometry newGeometry,
@@ -344,7 +356,7 @@ public class GTHelper {
                 } else if (property.getType().getBinding().equals(Double.class)) {
                     schema = schema + "<xs:element name=\"" + attributeName + "\" minOccurs=\"0\" maxOccurs=\"1\"> "
                             + "<xs:simpleType> ";
-                    schema = schema + "<xs:restriction base=\"xs:integer\"> " + "</xs:restriction> "
+                    schema = schema + "<xs:restriction base=\"xs:double\"> " + "</xs:restriction> "
                             + "</xs:simpleType> " + "</xs:element> ";
                 }
             }
@@ -401,7 +413,7 @@ public class GTHelper {
                 } else if (property.getType().getBinding().equals(Double.class)) {
                     schema = schema + "<xs:element name=\"" + attributeName + "\" minOccurs=\"0\" maxOccurs=\"1\"> "
                             + "<xs:simpleType> ";
-                    schema = schema + "<xs:restriction base=\"xs:integer\"> " + "</xs:restriction> "
+                    schema = schema + "<xs:restriction base=\"xs:double\"> " + "</xs:restriction> "
                             + "</xs:simpleType> " + "</xs:element> ";
                 }
             }
@@ -425,14 +437,7 @@ public class GTHelper {
     public String storeSchema(String schema,
             String uuid) throws IOException {
 
-        String serviceBaseURL = settingsService.getSetting(ServiceSettings.SERVICE_URL).getValue().toString();
-
-        // TODO
-        serviceBaseURL = serviceBaseURL.replace("service", "");
-
-        LOGGER.debug("GTHelper service base URL " + serviceBaseURL);
-
-        String domain = getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
+        String domain = GTHelper.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 
         domain = URLDecoder.decode(domain, "UTF-8");
 
@@ -461,7 +466,9 @@ public class GTHelper {
             writer.flush();
             writer.close();
 
-            String url = serviceBaseURL + "schemas/" + uuid + ".xsd";
+            // String url = WPSConfig.getServerBaseURL()+"/schemas/"+
+            // uuid+".xsd";
+            String url = serviceURL.replace("service", "") + "schemas/" + uuid + ".xsd";
             return url;
         }
     }

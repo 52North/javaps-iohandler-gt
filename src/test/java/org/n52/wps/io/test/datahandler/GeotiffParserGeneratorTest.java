@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
+/*
+ * Copyright (C) 2007 - 2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,76 +45,64 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.javaps.gt.io.datahandler.parser;
+package org.n52.wps.io.test.datahandler;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
-import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.factory.Hints;
-import org.geotools.gce.geotiff.GeoTiffReader;
-import org.n52.javaps.annotation.Properties;
-import org.n52.javaps.description.TypedProcessInputDescription;
+import javax.inject.Inject;
+
+import org.junit.Assert;
+import org.junit.Test;
 import org.n52.javaps.gt.io.data.binding.complex.GTRasterDataBinding;
-import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
-import org.n52.javaps.io.Data;
+import org.n52.javaps.gt.io.datahandler.generator.GeotiffGenerator;
+import org.n52.javaps.gt.io.datahandler.parser.GeotiffParser;
 import org.n52.javaps.io.DecodingException;
-import org.n52.javaps.io.InputHandler;
-import org.n52.javaps.utils.IOUtils;
+import org.n52.javaps.io.EncodingException;
+import org.n52.javaps.test.AbstractTestCase;
 import org.n52.shetland.ogc.wps.Format;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-@Properties(
-        defaultPropertyFileName = "geotiffzippedparser.default.properties",
-        propertyFileName = "geotiffzippedparser.properties")
-public class GeotiffZippedParser extends AbstractPropertiesInputOutputHandlerForFiles implements InputHandler {
+public class GeotiffParserGeneratorTest extends AbstractTestCase {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(GeotiffZippedParser.class);
+    @Inject
+    private GeotiffParser theParser;
+    @Inject
+    private GeotiffGenerator dataHandler;
 
-    public GeotiffZippedParser() {
-        super();
-        addSupportedBinding(GTRasterDataBinding.class);
-    }
+    @Test
+    public void testGenerator() {
 
-    private GTRasterDataBinding parseTiff(File file) {
-        Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-        GeoTiffReader reader;
+        Format format = theParser.getSupportedFormats().iterator().next();
+
+        InputStream input = getClass().getClassLoader().getResourceAsStream("6_UTM2GTIF.TIF");
+
+        GTRasterDataBinding theBinding = null;
         try {
-            reader = new GeoTiffReader(file, hints);
-            GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
-            return new GTRasterDataBinding(coverage);
-        } catch (Exception e) {
-            LOGGER.error("Exception while trying to create GTRasterDataBinding out of tiff.", e);
-            throw new RuntimeException(e);
+            theBinding = (GTRasterDataBinding) theParser.parse(null, input, format);
+        } catch (IOException | DecodingException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
         }
-    }
 
-    @Override
-    public Data<?> parse(TypedProcessInputDescription<?> description,
-            InputStream input,
-            Format format) throws IOException, DecodingException {
-        // unzip
-        File zippedFile;
-        try {
-            zippedFile = IOUtils.writeStreamToFile(input, "zip");
-            finalizeFiles.add(zippedFile);
+        Assert.assertTrue(theBinding.getPayload() != null);
 
-            List<File> files = IOUtils.unzipAll(zippedFile);
-            finalizeFiles.addAll(files);
+        for (Format format2 : dataHandler.getSupportedFormats()) {
+            try {
+                InputStream resultStream = dataHandler.generate(null, theBinding, format2);
 
-            for (File file : files) {
-                if (file.getName().toLowerCase().endsWith(".tif") || file.getName().toLowerCase().endsWith(".tiff")) {
-                    return parseTiff(file);
-                }
+                GTRasterDataBinding rasterBinding = (GTRasterDataBinding) theParser.parse(null, resultStream, format2);
+
+                Assert.assertTrue(rasterBinding.getPayload() != null);
+                Assert.assertTrue(rasterBinding.getPayload().getDimension() != 0);
+                Assert.assertTrue(rasterBinding.getPayload().getEnvelope() != null);
+
+            } catch (IOException | EncodingException | DecodingException e) {
+                e.printStackTrace();
+                Assert.fail(e.getMessage());
             }
 
-        } catch (IOException e) {
-            LOGGER.error("Exception while trying to unzip tiff.", e);
         }
-        throw new RuntimeException("Could not parse zipped geotiff.");
+
     }
 
 }

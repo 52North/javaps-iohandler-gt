@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
+/*
+ * Copyright (C) 2007 - 2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,85 +45,76 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.javaps.gt.io.datahandler.parser;
+package org.n52.wps.io.test.datahandler.generator;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 
-import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.gce.arcgrid.ArcGridReader;
-import org.n52.javaps.annotation.Properties;
-import org.n52.javaps.description.TypedProcessInputDescription;
-import org.n52.javaps.gt.io.data.binding.complex.AsciiGrassDataBinding;
-import org.n52.javaps.io.AbstractPropertiesInputOutputHandler;
-import org.n52.javaps.io.Data;
+import javax.inject.Inject;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.javaps.gt.io.datahandler.generator.KMLGenerator;
+import org.n52.javaps.gt.io.datahandler.parser.GTBinZippedSHPParser;
+import org.n52.javaps.gt.io.datahandler.parser.KMLParser;
 import org.n52.javaps.io.DecodingException;
-import org.n52.javaps.io.InputHandler;
+import org.n52.javaps.io.EncodingException;
+import org.n52.javaps.test.AbstractTestCase;
 import org.n52.shetland.ogc.wps.Format;
-import org.opengis.coverage.grid.GridCoverageReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * @author Theodor Foerster, ITC
- *
- */
-@Properties(
-        defaultPropertyFileName = "asciigrasshandler.default.properties",
-        propertyFileName = "asciigrassparser.properties")
-public class AsciiGrassParser extends AbstractPropertiesInputOutputHandler implements InputHandler {
+public class KMLGeneratorTest extends AbstractTestCase {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(AsciiGrassParser.class);
+    @Inject
+    private GTBinZippedSHPParser theParser;
 
-    public AsciiGrassParser() {
-        super();
-        addSupportedBinding(AsciiGrassDataBinding.class);
-    }
+    @Inject
+    private KMLGenerator dataHandler;
 
-    private File dumpToFile(InputStream inputStream) throws FileNotFoundException, IOException {
+    @Test
+    public void testGenerator() {
 
-        BufferedInputStream bis = new BufferedInputStream(inputStream);
+        theParser = new GTBinZippedSHPParser();
 
-        File outputFile = File.createTempFile("temp" + inputStream.hashCode(), "tmp");
+        KMLParser kmlParser = new KMLParser();
 
-        BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
+        Set<Format> formats = theParser.getSupportedFormats();
 
-        int _byte;
-        while ((_byte = bis.read()) != -1) {
-            bw.write(_byte);
-        }
+        InputStream input = getResource("states.zip");
 
-        bw.close();
-
-        return outputFile;
-    }
-
-    @Override
-    public Data<?> parse(TypedProcessInputDescription<?> description,
-            InputStream input,
-            Format format) throws IOException, DecodingException {
-        GridCoverage2D grid = null;
-
+        GTVectorDataBinding theBinding = null;
         try {
-            /** Step 1: Reading the coverage */
-
-            GridCoverageReader reader = new ArcGridReader(dumpToFile(input));
-
-            grid = (GridCoverage2D) reader.read(null);
-
-            LOGGER.info("getCoordinateReferenceSystem2D(): " + grid.getCoordinateReferenceSystem2D().toString());
-            LOGGER.info("getEnvelope():" + grid.getEnvelope2D().toString());
-
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            theBinding = (GTVectorDataBinding) theParser.parse(null, input, formats.iterator().next());
+        } catch (IOException | DecodingException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
         }
-        return new AsciiGrassDataBinding(grid);
+
+        Assert.assertNotNull(theBinding);
+        Assert.assertNotNull(theBinding.getPayload());
+        Assert.assertTrue(!theBinding.getPayload().isEmpty());
+
+        for (Format format2 : dataHandler.getSupportedFormats()) {
+            try {
+                InputStream in = dataHandler.generate(null, theBinding, format2);
+
+                GTVectorDataBinding generatedParsedBinding = (GTVectorDataBinding) kmlParser.parse(null, in, format2);
+
+                Assert.assertNotNull(generatedParsedBinding.getPayload());
+                Assert.assertTrue(generatedParsedBinding.getPayloadAsShpFile().exists());
+                Assert.assertTrue(!generatedParsedBinding.getPayload().isEmpty());
+
+            } catch (IOException | EncodingException | DecodingException e) {
+                e.printStackTrace();
+                Assert.fail(e.getMessage());
+            }
+
+        }
+
     }
 
 }

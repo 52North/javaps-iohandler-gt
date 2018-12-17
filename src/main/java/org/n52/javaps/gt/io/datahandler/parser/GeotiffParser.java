@@ -52,18 +52,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
 
 import javax.media.jai.JAI;
 
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.data.DataSourceException;
 import org.geotools.factory.Hints;
 import org.geotools.gce.geotiff.GeoTiffReader;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.gt.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
+import org.n52.javaps.gt.io.util.FileConstants;
 import org.n52.javaps.io.Data;
 import org.n52.javaps.io.DecodingException;
 import org.n52.javaps.io.InputHandler;
@@ -92,9 +91,6 @@ public class GeotiffParser extends AbstractPropertiesInputOutputHandlerForFiles 
             reader = new GeoTiffReader(file, hints);
             GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
             return new GTRasterDataBinding(coverage);
-        } catch (DataSourceException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -108,8 +104,8 @@ public class GeotiffParser extends AbstractPropertiesInputOutputHandlerForFiles 
         File tempFile;
 
         try {
-            tempFile = File.createTempFile("tempfile" + UUID.randomUUID(), "tmp");
-            finalizeFiles.add(tempFile); // mark for final delete
+            tempFile = FileConstants.createTempFile(FileConstants.SUFFIX_TIF);
+            finalizeFiles.add(tempFile);
             FileOutputStream outputStream = new FileOutputStream(tempFile);
             byte buf[] = new byte[4096];
             int len;
@@ -123,9 +119,6 @@ public class GeotiffParser extends AbstractPropertiesInputOutputHandlerForFiles 
         } catch (FileNotFoundException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e);
-        } catch (IOException e1) {
-            LOGGER.error(e1.getMessage(), e1);
-            throw new RuntimeException(e1);
         }
 
         return parseTiff(tempFile);

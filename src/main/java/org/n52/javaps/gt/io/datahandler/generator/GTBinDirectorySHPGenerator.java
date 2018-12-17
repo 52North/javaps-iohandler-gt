@@ -83,7 +83,7 @@ import com.vividsolutions.jts.geom.Geometry;
 public class GTBinDirectorySHPGenerator {
 
     private static final String SHP = ".shp";
-    
+
     @Inject
     private GTHelper gtHelper;
 
@@ -145,9 +145,9 @@ public class GTBinDirectorySHPGenerator {
      */
     private File createShapefileDirectory(FeatureCollection<SimpleFeatureType, SimpleFeature> collection,
             File parent) throws IOException, IllegalAttributeException {
-        
+
         File parentCopy = parent;
-        
+
         if (parentCopy == null) {
             File tempBaseFile = File.createTempFile("resolveDir", ".tmp");
             tempBaseFile.deleteOnExit();
