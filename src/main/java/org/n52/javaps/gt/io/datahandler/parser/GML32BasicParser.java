@@ -102,8 +102,8 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author matthes rieke
  */
 @Properties(
-        defaultPropertyFileName = "gml32basicparser.default.properties",
-        propertyFileName = "gml32basicparser.properties")
+        defaultPropertyFileName = "gml32basicparser.default.json",
+        propertyFileName = "gml32basicparser.json")
 public class GML32BasicParser extends AbstractPropertiesInputOutputHandler implements InputHandler {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GML32BasicParser.class);

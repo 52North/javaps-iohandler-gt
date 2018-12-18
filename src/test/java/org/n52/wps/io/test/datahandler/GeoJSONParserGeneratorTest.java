@@ -83,7 +83,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase {
         String inputGeoJSONPointString = "{\"type\":\"Point\",\"coordinates\":[100,0.0]}";
 
         InputStream in = new ByteArrayInputStream(inputGeoJSONPointString.getBytes());
- 
+
         Format format = theParser.getSupportedFormats().iterator().next();
 
         System.out.println("Trying to parse GeoJSON: " + inputGeoJSONPointString);

@@ -94,8 +94,8 @@ import com.vividsolutions.jts.io.ParseException;
  *
  */
 @Properties(
-        defaultPropertyFileName = "gtbinzippedwkt64parser.default.properties",
-        propertyFileName = "gtbinzippedwkt64parser.properties")
+        defaultPropertyFileName = "gtbinzippedwkt64parser.default.json",
+        propertyFileName = "gtbinzippedwkt64parser.json")
 public class GTBinZippedWKT64Parser extends AbstractPropertiesInputOutputHandlerForFiles implements InputHandler {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GTBinZippedWKT64Parser.class);

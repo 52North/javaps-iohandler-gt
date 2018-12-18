@@ -64,8 +64,8 @@ import org.n52.shetland.ogc.wps.Format;
  *
  */
 @Properties(
-        defaultPropertyFileName = "genericrasterfilehandler.default.properties",
-        propertyFileName = "genericrasterfilegenerator.properties")
+        defaultPropertyFileName = "genericrasterfilehandler.default.json",
+        propertyFileName = "genericrasterfilegenerator.json")
 public class GenericRasterFileGenerator extends AbstractPropertiesInputOutputHandler implements OutputHandler {
 
     public GenericRasterFileGenerator() {

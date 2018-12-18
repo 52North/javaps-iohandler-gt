@@ -82,7 +82,7 @@ public class GTBinZippedSHPGeneratorTest extends AbstractTestCase {
             } catch (IOException | DecodingException e) {
                 fail(e.getMessage());
             }
-            
+
             assertNotNull(theBinding);
 
             try {

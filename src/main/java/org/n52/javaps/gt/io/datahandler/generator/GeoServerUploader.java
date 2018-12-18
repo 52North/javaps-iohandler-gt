@@ -49,8 +49,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Properties(
-        propertyFileName = "geoserver.properties",
-        defaultPropertyFileName = "geoserver.default.properties")
+        propertyFileName = "geoserver.json",
+        defaultPropertyFileName = "geoserver.default.json")
 public class GeoServerUploader implements ConfigurableClass {
 
     private static final String CONTENT_TYPE = "Content-type";

@@ -71,11 +71,11 @@ public class GTBinZippedSHPParserTest extends AbstractTestCase {
     public void testParser() {
 
         InputStream input = getResource("tasmania_roads.zip");
-        
+
         Format format = dataHandler.getSupportedFormats().iterator().next();
-        
+
         GTVectorDataBinding theBinding = null;
-        
+
         try {
             theBinding = (GTVectorDataBinding) dataHandler.parse(null, input, format);
         } catch (IOException | DecodingException e) {

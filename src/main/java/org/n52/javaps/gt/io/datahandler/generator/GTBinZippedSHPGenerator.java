@@ -69,8 +69,8 @@ import org.n52.shetland.ogc.wps.Format;
  * @author victorzinho; Matthias Mueller, TU Dresden
  */
 @Properties(
-        defaultPropertyFileName = "gtbinzippedshphandler.default.properties",
-        propertyFileName = "gtbinzippedshpgenerator.properties")
+        defaultPropertyFileName = "gtbinzippedshphandler.default.json",
+        propertyFileName = "gtbinzippedshpgenerator.json")
 public class GTBinZippedSHPGenerator extends AbstractPropertiesInputOutputHandler implements OutputHandler {
 
     @Inject

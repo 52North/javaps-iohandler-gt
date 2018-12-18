@@ -83,8 +83,8 @@ import com.vividsolutions.jts.geom.GeometryCollection;
  *
  */
 @Properties(
-        defaultPropertyFileName = "geojsonhandler.default.properties",
-        propertyFileName = "geojson.properties")
+        defaultPropertyFileName = "geojsonhandler.default.json",
+        propertyFileName = "geojson.json")
 public class GeoJSONParser extends AbstractPropertiesInputOutputHandler implements InputHandler {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GeoJSONParser.class);

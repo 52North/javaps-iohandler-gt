@@ -75,8 +75,8 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  */
 @Properties(
-        defaultPropertyFileName = "geojsonhandler.default.properties",
-        propertyFileName = "geojson.properties")
+        defaultPropertyFileName = "geojsonhandler.default.json",
+        propertyFileName = "geojson.json")
 public class GeoJSONGenerator extends AbstractPropertiesInputOutputHandlerForFiles implements OutputHandler {
 
     public GeoJSONGenerator() {

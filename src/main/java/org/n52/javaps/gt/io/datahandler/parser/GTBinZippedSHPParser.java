@@ -68,8 +68,8 @@ import org.n52.javaps.utils.IOUtils;
 import org.n52.shetland.ogc.wps.Format;
 
 @Properties(
-        defaultPropertyFileName = "gtbinzippedshphandler.default.properties",
-        propertyFileName = "gtbinzippedshpparser.properties")
+        defaultPropertyFileName = "gtbinzippedshphandler.default.json",
+        propertyFileName = "gtbinzippedshpparser.json")
 public class GTBinZippedSHPParser extends AbstractPropertiesInputOutputHandlerForFiles implements InputHandler {
 
     public GTBinZippedSHPParser() {

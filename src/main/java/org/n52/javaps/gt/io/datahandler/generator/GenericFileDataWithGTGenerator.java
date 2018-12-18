@@ -64,8 +64,8 @@ import org.n52.shetland.ogc.wps.Format;
  *
  */
 @Properties(
-        defaultPropertyFileName = "genericfiledatawithgthandler.default.properties",
-        propertyFileName = "genericfiledatawithgtgenerator.properties")
+        defaultPropertyFileName = "genericfiledatawithgthandler.default.json",
+        propertyFileName = "genericfiledatawithgtgenerator.json")
 public class GenericFileDataWithGTGenerator extends AbstractPropertiesInputOutputHandler implements OutputHandler {
 
     public GenericFileDataWithGTGenerator() {

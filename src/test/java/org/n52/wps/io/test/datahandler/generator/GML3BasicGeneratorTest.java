@@ -87,7 +87,7 @@ public class GML3BasicGeneratorTest extends AbstractTestCase {
         Format format = new Format(
                 "text/xml; subtype=gml/3.1.1", StandardCharsets.UTF_8,
                 "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
-        
+
         GTVectorDataBinding theBinding = null;
         try {
             theBinding = (GTVectorDataBinding) theParser.parse(null, input, format);
@@ -96,7 +96,7 @@ public class GML3BasicGeneratorTest extends AbstractTestCase {
         }
 
         assertNotNull(theBinding);
-        
+
         try {
             InputStream resultStream = dataHandler.generate(null, theBinding, format);
 

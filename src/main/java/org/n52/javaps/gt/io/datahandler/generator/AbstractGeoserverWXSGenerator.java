@@ -56,8 +56,8 @@ import org.n52.javaps.io.data.binding.complex.GeotiffBinding;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @Properties(
-        defaultPropertyFileName = "abstractgeoserverwxsgenerator.default.properties",
-        propertyFileName = "abstractgeoserverwxsgenerator.properties")
+        defaultPropertyFileName = "abstractgeoserverwxsgenerator.default.json",
+        propertyFileName = "abstractgeoserverwxsgenerator.json")
 public abstract class AbstractGeoserverWXSGenerator extends AbstractPropertiesInputOutputHandler implements
         OutputHandler {
 

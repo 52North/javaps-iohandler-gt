@@ -75,8 +75,8 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Properties(
-        defaultPropertyFileName = "kmlhandler.default.properties",
-        propertyFileName = "kmlgenerator.properties")
+        defaultPropertyFileName = "kmlhandler.default.json",
+        propertyFileName = "kmlgenerator.json")
 public class KMLGenerator extends AbstractPropertiesInputOutputHandlerForFiles implements OutputHandler {
 
     private static Logger LOGGER = LoggerFactory.getLogger(KMLGenerator.class);

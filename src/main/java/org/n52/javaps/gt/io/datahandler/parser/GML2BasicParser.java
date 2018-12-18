@@ -101,8 +101,8 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  */
 @Properties(
-        defaultPropertyFileName = "gml2basichandler.default.properties",
-        propertyFileName = "gml2basicparser.properties")
+        defaultPropertyFileName = "gml2basichandler.default.json",
+        propertyFileName = "gml2basicparser.json")
 public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFiles implements InputHandler {
     private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicParser.class);
 

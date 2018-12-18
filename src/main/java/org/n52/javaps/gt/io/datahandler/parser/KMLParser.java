@@ -71,8 +71,8 @@ import org.n52.shetland.ogc.wps.Format;
  *
  */
 @Properties(
-        defaultPropertyFileName = "kmlhandler.default.properties",
-        propertyFileName = "kmlparser.properties")
+        defaultPropertyFileName = "kmlhandler.default.json",
+        propertyFileName = "kmlparser.json")
 public class KMLParser extends AbstractPropertiesInputOutputHandlerForFiles implements InputHandler {
 
     public KMLParser() {

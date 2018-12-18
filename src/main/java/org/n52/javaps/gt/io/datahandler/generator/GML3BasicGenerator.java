@@ -86,8 +86,8 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.Geometry;
 
 @Properties(
-        defaultPropertyFileName = "gml3basichandler.default.properties",
-        propertyFileName = "gml3basicgenerator.properties")
+        defaultPropertyFileName = "gml3basichandler.default.json",
+        propertyFileName = "gml3basicgenerator.json")
 public class GML3BasicGenerator extends AbstractPropertiesInputOutputHandlerForFiles implements OutputHandler {
 
     private static final String NS_GML = "http://www.opengis.net/gml";

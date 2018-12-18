@@ -83,8 +83,8 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Properties(
-        defaultPropertyFileName = "gml2basichandler.default.properties",
-        propertyFileName = "gml2basicgenerator.properties")
+        defaultPropertyFileName = "gml2basichandler.default.json",
+        propertyFileName = "gml2basicgenerator.json")
 public class GML2BasicGenerator extends AbstractPropertiesInputOutputHandlerForFiles implements OutputHandler {
 
     private static final String EMPTY_WFS_FEATURE_COLLECTION =

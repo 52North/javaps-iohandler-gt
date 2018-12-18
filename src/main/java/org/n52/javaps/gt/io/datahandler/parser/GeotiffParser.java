@@ -71,8 +71,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Properties(
-        defaultPropertyFileName = "geotiffhandler.default.properties",
-        propertyFileName = "geotiffparser.properties")
+        defaultPropertyFileName = "geotiffhandler.default.json",
+        propertyFileName = "geotiffparser.json")
 public class GeotiffParser extends AbstractPropertiesInputOutputHandlerForFiles implements InputHandler {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GeotiffParser.class);

@@ -51,8 +51,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Properties(
-        propertyFileName = "geoservergenerator.properties",
-        defaultPropertyFileName = "geoservergenerator.default.properties")
+        propertyFileName = "geoservergenerator.json",
+        defaultPropertyFileName = "geoservergenerator.default.json")
 public class GeoserverGenerator extends AbstractPropertiesInputOutputHandler implements OutputHandler {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GeoserverGenerator.class);

@@ -68,8 +68,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Properties(
-        defaultPropertyFileName = "geotiffzippedparser.default.properties",
-        propertyFileName = "geotiffzippedparser.properties")
+        defaultPropertyFileName = "geotiffzippedparser.default.json",
+        propertyFileName = "geotiffzippedparser.json")
 public class GeotiffZippedParser extends AbstractPropertiesInputOutputHandlerForFiles implements InputHandler {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GeotiffZippedParser.class);

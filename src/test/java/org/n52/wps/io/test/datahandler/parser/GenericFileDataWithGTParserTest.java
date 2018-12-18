@@ -79,7 +79,7 @@ public class GenericFileDataWithGTParserTest extends AbstractTestCase {
         }
 
         //TODO test mime types and file endings?!
-        
+
         Assert.assertNotNull(theBinding);
         Assert.assertNotNull(theBinding.getPayload());
         Assert.assertTrue(theBinding.getPayload().getBaseFile(true).exists());

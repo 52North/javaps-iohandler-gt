@@ -85,7 +85,7 @@ public class GTBinZippedWKT64ParserTest extends AbstractTestCase {
         InputStream input = new Base64InputStream(getResource("wktgeometries.base64.zip"));
 
         Format format = dataHandler.getSupportedFormats().iterator().next();
-        
+
         GTVectorDataBinding theBinding = null;
         try {
             theBinding = (GTVectorDataBinding) dataHandler.parse(null, input, format);

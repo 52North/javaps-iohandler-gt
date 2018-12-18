@@ -67,8 +67,8 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Properties(
-        defaultPropertyFileName = "genericrasterfilehandler.default.properties",
-        propertyFileName = "genericrasterfileparser.properties")
+        defaultPropertyFileName = "genericrasterfilehandler.default.json",
+        propertyFileName = "genericrasterfileparser.json")
 public class GenericRasterFileParser extends AbstractPropertiesInputOutputHandler implements InputHandler {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GenericRasterFileParser.class);

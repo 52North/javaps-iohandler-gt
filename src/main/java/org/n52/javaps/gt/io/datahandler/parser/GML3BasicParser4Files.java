@@ -73,8 +73,8 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Properties(
-        defaultPropertyFileName = "gml3basichandler.default.properties",
-        propertyFileName = "gml3basicparser4files.properties")
+        defaultPropertyFileName = "gml3basichandler.default.json",
+        propertyFileName = "gml3basicparser4files.json")
 public class GML3BasicParser4Files extends AbstractPropertiesInputOutputHandlerForFiles implements InputHandler {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GML3BasicParser4Files.class);
