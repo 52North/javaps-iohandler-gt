@@ -53,46 +53,36 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
+import javax.inject.Inject;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.feature.DefaultFeatureCollections;
-import org.geotools.feature.GeometryAttributeImpl;
-import org.geotools.feature.type.GeometryDescriptorImpl;
-import org.geotools.feature.type.GeometryTypeImpl;
-import org.geotools.filter.identity.GmlObjectIdImpl;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.gml2.GMLConfiguration;
 import org.geotools.gml3.ApplicationSchemaConfiguration;
 import org.geotools.xml.Configuration;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessInputDescription;
+import org.n52.javaps.gt.io.GTHelper;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
+import org.n52.javaps.gt.io.util.FileConstants;
 import org.n52.javaps.io.Data;
 import org.n52.javaps.io.DecodingException;
 import org.n52.javaps.io.InputHandler;
 import org.n52.javaps.io.SchemaRepository;
 import org.n52.shetland.ogc.wps.Format;
-import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.filter.identity.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * This parser handles xml files compliant to GML2.
@@ -104,40 +94,15 @@ import com.vividsolutions.jts.geom.Geometry;
         defaultPropertyFileName = "gml2basichandler.default.json",
         propertyFileName = "gml2basicparser.json")
 public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFiles implements InputHandler {
+
     private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicParser.class);
+
+    @Inject
+    private GTHelper gtHelper;
 
     public GML2BasicParser() {
         super();
         addSupportedBinding(GTVectorDataBinding.class);
-    }
-
-    public GTVectorDataBinding parse(InputStream stream,
-            String mimeType,
-            String schema) {
-
-        FileOutputStream fos = null;
-        try {
-            File tempFile = File.createTempFile(UUID.randomUUID().toString(), ".gml2");
-            finalizeFiles.add(tempFile); // mark for final delete
-            fos = new FileOutputStream(tempFile);
-            int i = stream.read();
-            while (i != -1) {
-                fos.write(i);
-                i = stream.read();
-            }
-            fos.flush();
-            fos.close();
-            GTVectorDataBinding data = parseXML(tempFile);
-
-            return data;
-        } catch (IOException e) {
-            if (fos != null)
-                try {
-                    fos.close();
-                } catch (Exception e1) {
-                }
-            throw new IllegalArgumentException("Error while creating tempFile", e);
-        }
     }
 
     public GTVectorDataBinding parseXML(File file) {
@@ -169,7 +134,7 @@ public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFile
         org.geotools.xml.Parser parser = new org.geotools.xml.Parser(configuration);
 
         // parse
-        SimpleFeatureCollection fc = DefaultFeatureCollections.newCollection();
+        SimpleFeatureCollection fc = new DefaultFeatureCollection(null, null);
         try {
             Object parsedData = null;
             try {
@@ -185,7 +150,7 @@ public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFile
             if (parsedData instanceof SimpleFeatureCollection) {
                 fc = (SimpleFeatureCollection) parsedData;
             } else {
-                List<?> possibleSimpleFeatureList = ((ArrayList<?>) ((HashMap<?, ?>) parsedData).get("featureMember"));
+                List<?> possibleSimpleFeatureList = (ArrayList<?>) ((HashMap<?, ?>) parsedData).get("featureMember");
 
                 if (possibleSimpleFeatureList != null) {
                     List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
@@ -195,7 +160,7 @@ public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFile
                     for (Object possibleSimpleFeature : possibleSimpleFeatureList) {
 
                         if (possibleSimpleFeature instanceof SimpleFeature) {
-                            SimpleFeature sf = ((SimpleFeature) possibleSimpleFeature);
+                            SimpleFeature sf = (SimpleFeature) possibleSimpleFeature;
                             if (sft == null) {
                                 sft = sf.getType();
                             }
@@ -209,42 +174,8 @@ public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFile
                 }
             }
 
-            SimpleFeatureIterator featureIterator = fc.features();
-            while (featureIterator.hasNext()) {
-                SimpleFeature feature = (SimpleFeature) featureIterator.next();
-                if (feature.getDefaultGeometry() == null) {
-                    Collection<org.opengis.feature.Property> properties = feature.getProperties();
-                    for (org.opengis.feature.Property property : properties) {
-                        try {
+            gtHelper.checkGeometries(fc);
 
-                            Geometry g = (Geometry) property.getValue();
-                            if (g != null) {
-                                GeometryAttribute oldGeometryDescriptor = feature.getDefaultGeometryProperty();
-                                GeometryType type = new GeometryTypeImpl(property.getName(), (Class<
-                                        ?>) oldGeometryDescriptor.getType().getBinding(), oldGeometryDescriptor
-                                                .getType().getCoordinateReferenceSystem(), oldGeometryDescriptor
-                                                        .getType().isIdentified(), oldGeometryDescriptor.getType()
-                                                                .isAbstract(), oldGeometryDescriptor.getType()
-                                                                        .getRestrictions(), oldGeometryDescriptor
-                                                                                .getType().getSuper(),
-                                        oldGeometryDescriptor.getType().getDescription());
-
-                                GeometryDescriptor newGeometryDescriptor = new GeometryDescriptorImpl(type, property
-                                        .getName(), 0, 1, true, null);
-                                Identifier identifier = new GmlObjectIdImpl(feature.getID());
-                                GeometryAttributeImpl geo = new GeometryAttributeImpl((Object) g, newGeometryDescriptor,
-                                        identifier);
-                                feature.setDefaultGeometryProperty(geo);
-                                feature.setDefaultGeometry(g);
-
-                            }
-                        } catch (ClassCastException e) {
-                            // do nothing
-                        }
-
-                    }
-                }
-            }
             return fc;
         } catch (Exception e) {
             LOGGER.error("Exception while trying to parse GML2 FeatureCollection.", e);
@@ -275,8 +206,8 @@ public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFile
 
         FileOutputStream fos = null;
         try {
-            File tempFile = File.createTempFile(UUID.randomUUID().toString(), ".gml2");
-            finalizeFiles.add(tempFile); // mark for final delete
+            File tempFile = FileConstants.createTempFile(FileConstants.SUFFIX_GML2);
+            finalizeFiles.add(tempFile);
             fos = new FileOutputStream(tempFile);
             int i = input.read();
             while (i != -1) {
@@ -289,11 +220,13 @@ public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFile
 
             return data;
         } catch (IOException e) {
-            if (fos != null)
+            if (fos != null) {
                 try {
                     fos.close();
                 } catch (Exception e1) {
+                    LOGGER.trace(e.getMessage());
                 }
+            }
             throw new IllegalArgumentException("Error while creating tempFile", e);
         }
     }

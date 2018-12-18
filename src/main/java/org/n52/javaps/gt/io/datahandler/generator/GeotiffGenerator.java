@@ -110,8 +110,7 @@ public class GeotiffGenerator extends AbstractPropertiesInputOutputHandlerForFil
         JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256 * 1024 * 1024);
 
         try {
-            geoTiffWriter.write(coverage, (GeneralParameterValue[]) paramWrite.values().toArray(
-                    new GeneralParameterValue[1]));
+            geoTiffWriter.write(coverage, paramWrite.values().toArray(new GeneralParameterValue[1]));
         } catch (IllegalArgumentException | IndexOutOfBoundsException | IOException e1) {
             LOGGER.error(e1.getMessage(), e1);
             throw new RuntimeException(e1);
@@ -129,7 +128,8 @@ public class GeotiffGenerator extends AbstractPropertiesInputOutputHandlerForFil
 
             GridCoverage coverage = ((GTRasterDataBinding) data).getPayload();
             GeoTiffWriter geoTiffWriter = null;
-            String fileName = FileConstants.TMP_DIR_PATH + File.separatorChar + "temp" + UUID.randomUUID() + FileConstants.dot(FileConstants.SUFFIX_TMP);
+            String fileName = FileConstants.TMP_DIR_PATH + File.separatorChar + "temp" + UUID.randomUUID()
+                    + FileConstants.dot(FileConstants.SUFFIX_TMP);
             File outputFile = new File(fileName);
             this.finalizeFiles.add(outputFile);
 

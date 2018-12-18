@@ -57,23 +57,20 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.feature.DefaultFeatureCollections;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.GeometryAttributeImpl;
-import org.geotools.feature.type.GeometryDescriptorImpl;
-import org.geotools.feature.type.GeometryTypeImpl;
-import org.geotools.filter.identity.GmlObjectIdImpl;
 import org.geotools.gml3.ApplicationSchemaConfiguration;
 import org.geotools.gml3.GMLConfiguration;
 import org.geotools.xml.Configuration;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessInputDescription;
+import org.n52.javaps.gt.io.GTHelper;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
 import org.n52.javaps.io.Data;
@@ -81,18 +78,12 @@ import org.n52.javaps.io.DecodingException;
 import org.n52.javaps.io.InputHandler;
 import org.n52.javaps.io.SchemaRepository;
 import org.n52.shetland.ogc.wps.Format;
-import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.filter.identity.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * This parser handles xml files compliant to gmlpacket.xsd
@@ -107,6 +98,9 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
 
     private static Logger LOGGER = LoggerFactory.getLogger(GML3BasicParser.class);
 
+    @Inject
+    private GTHelper gtHelper;
+
     public GML3BasicParser() {
         super();
         addSupportedBinding(GTVectorDataBinding.class);
@@ -119,7 +113,7 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
         FileOutputStream fos = null;
         try {
             File tempFile = File.createTempFile("wps", "tmp");
-            finalizeFiles.add(tempFile); // mark for final delete
+            finalizeFiles.add(tempFile);
             fos = new FileOutputStream(tempFile);
             int i = stream.read();
             while (i != -1) {
@@ -224,7 +218,7 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
         parser.setStrict(shouldSetParserStrict);
 
         // parse
-        SimpleFeatureCollection fc = DefaultFeatureCollections.newCollection();
+        SimpleFeatureCollection fc = new DefaultFeatureCollection(null, null);
         try {
             Object parsedData = parser.parse(new FileInputStream(file));
             if (parsedData instanceof FeatureCollection) {
@@ -278,41 +272,8 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
 
             }
 
-            FeatureIterator<?> featureIterator = fc.features();
-            while (featureIterator.hasNext()) {
-                SimpleFeature feature = (SimpleFeature) featureIterator.next();
-                if (feature.getDefaultGeometry() == null) {
-                    Collection<org.opengis.feature.Property> properties = feature.getProperties();
-                    for (org.opengis.feature.Property property : properties) {
-                        try {
-                            Geometry g = (Geometry) property.getValue();
-                            if (g != null) {
-                                GeometryAttribute oldGeometryDescriptor = feature.getDefaultGeometryProperty();
-                                GeometryType type = new GeometryTypeImpl(property.getName(), (Class<
-                                        ?>) oldGeometryDescriptor.getType().getBinding(), oldGeometryDescriptor
-                                                .getType().getCoordinateReferenceSystem(), oldGeometryDescriptor
-                                                        .getType().isIdentified(), oldGeometryDescriptor.getType()
-                                                                .isAbstract(), oldGeometryDescriptor.getType()
-                                                                        .getRestrictions(), oldGeometryDescriptor
-                                                                                .getType().getSuper(),
-                                        oldGeometryDescriptor.getType().getDescription());
+            gtHelper.checkGeometries(fc);
 
-                                GeometryDescriptor newGeometryDescriptor = new GeometryDescriptorImpl(type, property
-                                        .getName(), 0, 1, true, null);
-                                Identifier identifier = new GmlObjectIdImpl(feature.getID());
-                                GeometryAttributeImpl geo = new GeometryAttributeImpl((Object) g, newGeometryDescriptor,
-                                        identifier);
-                                feature.setDefaultGeometryProperty(geo);
-                                feature.setDefaultGeometry(g);
-
-                            }
-                        } catch (ClassCastException e) {
-                            // do nothing
-                        }
-
-                    }
-                }
-            }
         } catch (Exception e) {
             LOGGER.error("Exception while handling parsed GML.", e);
             throw new RuntimeException(e);
@@ -347,7 +308,7 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
         FileOutputStream fos = null;
         try {
             File tempFile = File.createTempFile("wps", "tmp");
-            finalizeFiles.add(tempFile); // mark for final delete
+            finalizeFiles.add(tempFile);
             fos = new FileOutputStream(tempFile);
             int i = input.read();
             while (i != -1) {

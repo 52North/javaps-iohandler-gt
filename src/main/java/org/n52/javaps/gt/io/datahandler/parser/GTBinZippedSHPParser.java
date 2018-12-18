@@ -96,11 +96,7 @@ public class GTBinZippedSHPParser extends AbstractPropertiesInputOutputHandlerFo
                 outputStream.close();
                 stream.close();
             } catch (FileNotFoundException e) {
-                System.gc();
                 throw new RuntimeException(e);
-            } catch (IOException e1) {
-                System.gc();
-                throw new RuntimeException(e1);
             }
             File shp = IOUtils.unzip(tempFile, "shp").get(0);
             DataStore store = new ShapefileDataStore(shp.toURI().toURL());

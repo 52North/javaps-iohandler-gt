@@ -53,6 +53,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessInputDescription;
@@ -76,7 +78,11 @@ import org.slf4j.LoggerFactory;
         defaultPropertyFileName = "gml2basichandler.default.json",
         propertyFileName = "gml2basicparser4files.json")
 public class GML2BasicParser4Files extends AbstractPropertiesInputOutputHandlerForFiles implements InputHandler {
+
     private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicParser4Files.class);
+
+    @Inject
+    private GML2BasicParser gml2BasicParser;
 
     public GML2BasicParser4Files() {
         super();
@@ -85,7 +91,7 @@ public class GML2BasicParser4Files extends AbstractPropertiesInputOutputHandlerF
 
     private GenericFileDataWithGTBinding parseXML(File file) {
 
-        SimpleFeatureCollection fc = new GML2BasicParser().parseSimpleFeatureCollection(file);
+        SimpleFeatureCollection fc = gml2BasicParser.parseSimpleFeatureCollection(file);
 
         GenericFileDataWithGTBinding data = null;
         try {

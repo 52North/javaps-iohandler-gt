@@ -87,8 +87,12 @@ import org.slf4j.LoggerFactory;
         propertyFileName = "gml2basicgenerator.json")
 public class GML2BasicGenerator extends AbstractPropertiesInputOutputHandlerForFiles implements OutputHandler {
 
+
+    private static final String NS_URI_WFS = "http://www.opengis.net/wfs";
+    private static final String NS_URI_GML = "http://www.opengis.net/gml";
+
     private static final String EMPTY_WFS_FEATURE_COLLECTION =
-            "<wfs:FeatureCollection xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\"/>";
+            "<wfs:FeatureCollection xmlns:wfs=\"" + NS_URI_WFS + "\" xmlns:gml=\"" + NS_URI_GML + "\"/>";
 
     private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicGenerator.class);
 
@@ -142,7 +146,7 @@ public class GML2BasicGenerator extends AbstractPropertiesInputOutputHandlerForF
         ftNames.declareNamespace(fc.getSchema(), fc.getSchema().getName().getLocalPart(), uri);
 
         if (ftNamespaces.containsKey(uri)) {
-            String location = (String) ftNamespaces.get(uri);
+            String location = ftNamespaces.get(uri);
             ftNamespaces.put(uri, location + "," + fc.getSchema().getName().getLocalPart());
         } else {
             ftNamespaces.put(uri, uri);
@@ -156,7 +160,7 @@ public class GML2BasicGenerator extends AbstractPropertiesInputOutputHandlerForF
         String schemaLocation = SchemaRepository.getSchemaLocation(namespace);
 
         tx.addSchemaLocation(uri, schemaLocation);
-        tx.addSchemaLocation("http://www.opengis.net/wfs", "http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd");
+        tx.addSchemaLocation(NS_URI_WFS, "http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd");
 
         try {
             tx.transform(fc, writer);

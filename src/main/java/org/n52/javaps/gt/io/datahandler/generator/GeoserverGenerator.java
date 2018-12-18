@@ -151,7 +151,7 @@ public class GeoserverGenerator extends AbstractPropertiesInputOutputHandler imp
         }
         if (coll instanceof GeotiffBinding) {
             GeotiffBinding data = (GeotiffBinding) coll;
-            file = (File) data.getPayload();
+            file = data.getPayload();
         }
         if (coll instanceof GenericFileDataWithGTBinding) {
             file = ((GenericFileDataWithGTBinding) coll).getPayload().getBaseFile(true);

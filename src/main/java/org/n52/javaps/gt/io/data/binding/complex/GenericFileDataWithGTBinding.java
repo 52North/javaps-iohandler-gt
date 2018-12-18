@@ -70,7 +70,7 @@ public class GenericFileDataWithGTBinding implements ComplexData<GenericFileData
         return payload;
     }
 
-    public Class getSupportedClass() {
+    public Class<GenericFileDataWithGT> getSupportedClass() {
         return GenericFileDataWithGT.class;
     }
 }

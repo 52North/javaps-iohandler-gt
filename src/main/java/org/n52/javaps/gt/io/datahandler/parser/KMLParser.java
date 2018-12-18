@@ -52,6 +52,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.inject.Inject;
+
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.kml.KMLConfiguration;
 import org.geotools.xml.Configuration;
@@ -75,6 +77,9 @@ import org.n52.shetland.ogc.wps.Format;
         propertyFileName = "kmlparser.json")
 public class KMLParser extends AbstractPropertiesInputOutputHandlerForFiles implements InputHandler {
 
+    @Inject
+    private GML3BasicParser gml3BasicParser;
+
     public KMLParser() {
         super();
         addSupportedBinding(GTVectorDataBinding.class);
@@ -83,7 +88,7 @@ public class KMLParser extends AbstractPropertiesInputOutputHandlerForFiles impl
     private GTVectorDataBinding parseXML(File file) {
         Configuration configuration = new KMLConfiguration();
 
-        SimpleFeatureCollection fc = new GML3BasicParser().parseFeatureCollection(file, configuration, true);
+        SimpleFeatureCollection fc = gml3BasicParser.parseFeatureCollection(file, configuration, true);
 
         GTVectorDataBinding data = new GTVectorDataBinding(fc);
 

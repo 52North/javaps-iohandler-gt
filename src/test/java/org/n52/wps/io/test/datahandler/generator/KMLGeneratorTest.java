@@ -74,12 +74,11 @@ public class KMLGeneratorTest extends AbstractTestCase {
     @Inject
     private KMLGenerator dataHandler;
 
+    @Inject
+    private KMLParser kmlParser;
+
     @Test
     public void testGenerator() {
-
-        theParser = new GTBinZippedSHPParser();
-
-        KMLParser kmlParser = new KMLParser();
 
         Set<Format> formats = theParser.getSupportedFormats();
 
@@ -95,22 +94,19 @@ public class KMLGeneratorTest extends AbstractTestCase {
         Assert.assertNotNull(theBinding);
         Assert.assertNotNull(theBinding.getPayload());
         Assert.assertTrue(!theBinding.getPayload().isEmpty());
+        try {
+            Format format2 = dataHandler.getSupportedFormats().iterator().next();
+            InputStream in = dataHandler.generate(null, theBinding, format2);
 
-        for (Format format2 : dataHandler.getSupportedFormats()) {
-            try {
-                InputStream in = dataHandler.generate(null, theBinding, format2);
+            GTVectorDataBinding generatedParsedBinding = (GTVectorDataBinding) kmlParser.parse(null, in, format2);
 
-                GTVectorDataBinding generatedParsedBinding = (GTVectorDataBinding) kmlParser.parse(null, in, format2);
+            Assert.assertNotNull(generatedParsedBinding.getPayload());
+            Assert.assertTrue(generatedParsedBinding.getPayloadAsShpFile().exists());
+            Assert.assertTrue(!generatedParsedBinding.getPayload().isEmpty());
 
-                Assert.assertNotNull(generatedParsedBinding.getPayload());
-                Assert.assertTrue(generatedParsedBinding.getPayloadAsShpFile().exists());
-                Assert.assertTrue(!generatedParsedBinding.getPayload().isEmpty());
-
-            } catch (IOException | EncodingException | DecodingException e) {
-                e.printStackTrace();
-                Assert.fail(e.getMessage());
-            }
-
+        } catch (IOException | EncodingException | DecodingException e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
         }
 
     }

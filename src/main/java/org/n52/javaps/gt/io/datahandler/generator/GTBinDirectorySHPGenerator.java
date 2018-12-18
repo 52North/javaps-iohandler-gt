@@ -77,10 +77,14 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 public class GTBinDirectorySHPGenerator {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(GTBinDirectorySHPGenerator.class);
 
     private static final String SHP = ".shp";
 
@@ -143,6 +147,7 @@ public class GTBinDirectorySHPGenerator {
      *             If an error occurs while writing the features into the the
      *             shapefile
      */
+    @SuppressWarnings("unchecked")
     private File createShapefileDirectory(FeatureCollection<SimpleFeatureType, SimpleFeature> collection,
             File parent) throws IOException, IllegalAttributeException {
 
@@ -173,16 +178,12 @@ public class GTBinDirectorySHPGenerator {
 
         ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory.createNewDataStore(params);
 
-        newDataStore.createSchema((SimpleFeatureType) collection.getSchema());
+        newDataStore.createSchema(collection.getSchema());
         if (collection.getSchema().getCoordinateReferenceSystem() == null) {
             try {
                 newDataStore.forceSchemaCRS(CRS.decode("4326"));
-            } catch (NoSuchAuthorityCodeException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             } catch (FactoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.error("Could not decode CRS 4326");
             }
         } else {
             newDataStore.forceSchemaCRS(collection.getSchema().getCoordinateReferenceSystem());

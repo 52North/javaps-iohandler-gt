@@ -78,8 +78,6 @@ public class GML2BasicParserGeneratorTest extends AbstractTestCase {
     @Test
     public void testParser() {
 
-        parser = new GML2BasicParser();
-
         Format format = parser.getSupportedFormats().iterator().next();
 
         InputStream input = getClass().getClassLoader().getResourceAsStream("tasmania_roads_gml2.xml");

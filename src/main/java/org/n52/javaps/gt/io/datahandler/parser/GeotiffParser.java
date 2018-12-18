@@ -89,7 +89,7 @@ public class GeotiffParser extends AbstractPropertiesInputOutputHandlerForFiles 
         GeoTiffReader reader;
         try {
             reader = new GeoTiffReader(file, hints);
-            GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
+            GridCoverage2D coverage = reader.read(null);
             return new GTRasterDataBinding(coverage);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);

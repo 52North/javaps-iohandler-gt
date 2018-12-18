@@ -84,7 +84,7 @@ public class GeotiffZippedParser extends AbstractPropertiesInputOutputHandlerFor
         GeoTiffReader reader;
         try {
             reader = new GeoTiffReader(file, hints);
-            GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
+            GridCoverage2D coverage = reader.read(null);
             return new GTRasterDataBinding(coverage);
         } catch (Exception e) {
             LOGGER.error("Exception while trying to create GTRasterDataBinding out of tiff.", e);

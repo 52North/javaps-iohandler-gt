@@ -115,12 +115,9 @@ public class GTBinZippedWKT64Parser extends AbstractPropertiesInputOutputHandler
         if (coordinateReferenceSystem == null) {
             try {
                 coordinateReferenceSystem = CRS.decode("EPSG:4326");
-            } catch (NoSuchAuthorityCodeException e) {
+            } catch (FactoryException e) {
                 LOGGER.error(e.getMessage(), e);
                 throw new RuntimeException("An error has occurred while trying to decode CRS EPSG:4326", e);
-            } catch (FactoryException e) {
-                LOGGER.error(e.getMessage());
-                throw new RuntimeException("An error has occurred while trying to decode CRS EPSG:432", e);
             }
             typeBuilder.setCRS(coordinateReferenceSystem);
         }
@@ -166,12 +163,7 @@ public class GTBinZippedWKT64Parser extends AbstractPropertiesInputOutputHandler
                 outputStream.close();
                 stream.close();
             } catch (FileNotFoundException e) {
-                System.gc();
                 LOGGER.error(e.getMessage(), e);
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                LOGGER.error(e.getMessage(), e);
-                System.gc();
                 throw new RuntimeException(e);
             }
 
@@ -205,16 +197,7 @@ public class GTBinZippedWKT64Parser extends AbstractPropertiesInputOutputHandler
                     coordinateReferenceSystem);
 
             return new GTVectorDataBinding(inputFeatureCollection);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("An error has occurred while accessing provided data", e);
-        } catch (ParseException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("An error has occurred while accessing provided data", e);
-        } catch (NoSuchAuthorityCodeException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("An error has occurred while accessing provided data", e);
-        } catch (FactoryException e) {
+        } catch (IOException | FactoryException | ParseException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException("An error has occurred while accessing provided data", e);
         }

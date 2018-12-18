@@ -53,28 +53,5 @@
     <bean id="gtbinzippedshpgenerator" class="org.n52.javaps.gt.io.datahandler.generator.GTBinZippedSHPGenerator" />
     <bean id="kmlgenerator" class="org.n52.javaps.gt.io.datahandler.generator.KMLGenerator" />
     <bean id="gtbindirectoryshpgenerator" class="org.n52.javaps.gt.io.datahandler.generator.GTBinDirectorySHPGenerator" />
-<!--     <bean id="settingsService" class="org.n52.faroe.SettingsServiceImpl" /> -->
-
-<!--     <bean id="eventBus" class="org.n52.janmayen.event.EventBus"> -->
-<!--         <property name="async" value="false" /> -->
-<!--     </bean> -->
-<!--     <bean id="settingValueFactory" class="org.n52.faroe.json.JsonSettingValueFactory" /> -->
-<!--     <bean id="adminUserService" class="org.n52.iceland.config.AdminUserServiceImpl" /> -->
-<!--     <bean id="settingsEncoder" class="org.n52.faroe.json.JsonSettingsEncoder" /> -->
-<!--     <bean id="activationService" class="org.n52.iceland.config.ActivationService" /> -->
-<!--     <bean id="activationDao" class="org.n52.iceland.config.json.JsonActivationDao" /> -->
-<!--     <bean id="settingsDao" class="org.n52.faroe.json.JsonSettingsDao" /> -->
-<!--     <bean id="adminUserDao" class="org.n52.iceland.config.json.JsonAdminUserDao" /> -->
-
-<!--     <bean id="jsonConfiguration" class="org.n52.faroe.json.JsonConfiguration" init-method="init"> -->
-<!--         <property name="fileName" value="configuration.json" /> -->
-<!--         <property name="writeTimeout" value="1000" /> -->
-<!--         <property name="configLocationProvider" ref="configLocationProvider"/> -->
-<!--     </bean> -->
-<!--     <bean id="configLocationProvider" class="org.n52.iceland.service.ServletConfigLocationProvider" /> -->
-<!--     <bean id="abstractgeoserverwxsgenerator" class="org.n52.javaps.gt.io.datahandler.generator.AbstractGeoserverWXSGenerator" /> -->
-<!--     <bean id="geoserverwmsgenerator" class="org.n52.javaps.gt.io.datahandler.generator.GeoserverWMSGenerator" /> -->
-<!--     <bean id="geoserverwfsgenerator" class="org.n52.javaps.gt.io.datahandler.generator.GeoserverWFSGenerator" /> -->
-<!--     <bean id="geoserverwcsgenerator" class="org.n52.javaps.gt.io.datahandler.generator.GeoserverWCSGenerator" /> -->
 
 </beans>

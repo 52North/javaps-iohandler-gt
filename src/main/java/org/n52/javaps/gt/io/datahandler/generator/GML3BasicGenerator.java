@@ -127,8 +127,7 @@ public class GML3BasicGenerator extends AbstractPropertiesInputOutputHandlerForF
 
             encoder = new org.geotools.xml.Encoder(configuration);
             encoder.setNamespaceAware(true);
-            encoder.setSchemaLocation(NS_GML,
-                    SCHEMALOCATION_GML311);
+            encoder.setSchemaLocation(NS_GML, SCHEMALOCATION_GML311);
 
         } else {
 
@@ -136,9 +135,7 @@ public class GML3BasicGenerator extends AbstractPropertiesInputOutputHandlerForF
 
             encoder = new org.geotools.xml.Encoder(configuration);
             encoder.setNamespaceAware(true);
-            encoder.setSchemaLocation(
-                   NS_GML + " " + SCHEMALOCATION_GML311, namespace + " "
-                            + schemaLocation);
+            encoder.setSchemaLocation(NS_GML + " " + SCHEMALOCATION_GML311, namespace + " " + schemaLocation);
 
         }
 

@@ -53,6 +53,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessInputDescription;
@@ -79,6 +81,9 @@ public class GML3BasicParser4Files extends AbstractPropertiesInputOutputHandlerF
 
     private static Logger LOGGER = LoggerFactory.getLogger(GML3BasicParser4Files.class);
 
+    @Inject
+    private GML3BasicParser gml3BasicParser;
+
     public GML3BasicParser4Files() {
         super();
         addSupportedBinding(GenericFileDataWithGTBinding.class);
@@ -86,7 +91,7 @@ public class GML3BasicParser4Files extends AbstractPropertiesInputOutputHandlerF
 
     private GenericFileDataWithGTBinding parseXML(File file) {
 
-        SimpleFeatureCollection fc = new GML3BasicParser().parseFeatureCollection(file);
+        SimpleFeatureCollection fc = gml3BasicParser.parseFeatureCollection(file);
 
         GenericFileDataWithGTBinding data = null;
         try {

@@ -60,21 +60,29 @@ import javax.xml.namespace.QName;
 
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.GeometryAttributeImpl;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.feature.type.GeometryDescriptorImpl;
+import org.geotools.feature.type.GeometryTypeImpl;
+import org.geotools.filter.identity.GmlObjectIdImpl;
 import org.geotools.referencing.CRS;
 import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.service.ServiceSettings;
+import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.aggregate.MultiCurve;
 import org.opengis.geometry.aggregate.MultiSurface;
 import org.opengis.geometry.primitive.Curve;
@@ -489,6 +497,47 @@ public class GTHelper {
             return new ListFeatureCollection(featureList.get(0).getFeatureType(), featureList);
         }
         return new DefaultFeatureCollection();
+    }
+
+    public void checkGeometries(SimpleFeatureCollection fc) {
+
+        SimpleFeatureIterator featureIterator = fc.features();
+        while (featureIterator.hasNext()) {
+            SimpleFeature feature = featureIterator.next();
+            if (feature.getDefaultGeometry() == null) {
+                Collection<org.opengis.feature.Property> properties = feature.getProperties();
+                for (org.opengis.feature.Property property : properties) {
+                    try {
+
+                        Geometry g = (Geometry) property.getValue();
+                        if (g != null) {
+                            GeometryAttribute oldGeometryDescriptor = feature.getDefaultGeometryProperty();
+                            GeometryType type = new GeometryTypeImpl(property.getName(), (Class<
+                                    ?>) oldGeometryDescriptor.getType().getBinding(), oldGeometryDescriptor
+                                            .getType().getCoordinateReferenceSystem(), oldGeometryDescriptor
+                                                    .getType().isIdentified(), oldGeometryDescriptor.getType()
+                                                            .isAbstract(), oldGeometryDescriptor.getType()
+                                                                    .getRestrictions(), oldGeometryDescriptor
+                                                                            .getType().getSuper(),
+                                    oldGeometryDescriptor.getType().getDescription());
+
+                            GeometryDescriptor newGeometryDescriptor = new GeometryDescriptorImpl(type, property
+                                    .getName(), 0, 1, true, null);
+                            Identifier identifier = new GmlObjectIdImpl(feature.getID());
+                            GeometryAttributeImpl geo = new GeometryAttributeImpl((Object) g, newGeometryDescriptor,
+                                    identifier);
+                            feature.setDefaultGeometryProperty(geo);
+                            feature.setDefaultGeometry(g);
+
+                        }
+                    } catch (ClassCastException e) {
+                        LOGGER.error(e.getMessage());
+                    }
+
+                }
+            }
+        }
+
     }
 
 }
