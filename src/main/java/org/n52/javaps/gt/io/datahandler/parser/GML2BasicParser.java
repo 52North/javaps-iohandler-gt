@@ -49,7 +49,6 @@ package org.n52.javaps.gt.io.datahandler.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -58,7 +57,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -82,7 +80,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This parser handles xml files compliant to GML2.
@@ -115,7 +112,7 @@ public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFile
     }
 
     public SimpleFeatureCollection parseSimpleFeatureCollection(File file) {
-        QName schematypeTuple = determineFeatureTypeSchema(file);
+        QName schematypeTuple = gtHelper.determineFeatureTypeSchema(file);
 
         Configuration configuration = null;
 
@@ -183,50 +180,16 @@ public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFile
         }
     }
 
-    private QName determineFeatureTypeSchema(File file) {
-        try {
-            GML2Handler handler = new GML2Handler();
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.newSAXParser().parse(new FileInputStream(file), (DefaultHandler) handler);
-            String schemaUrl = handler.getSchemaUrl();
-            String namespaceURI = handler.getNameSpaceURI();
-            return new QName(namespaceURI, schemaUrl);
-
-        } catch (Exception e) {
-            LOGGER.error("Exception while trying to determining GML2 FeatureType schema.", e);
-            throw new IllegalArgumentException(e);
-        }
-    }
-
     @Override
     public Data<?> parse(TypedProcessInputDescription<?> description,
             InputStream input,
             Format format) throws IOException, DecodingException {
 
-        FileOutputStream fos = null;
         try {
-            File tempFile = FileConstants.createTempFile(FileConstants.SUFFIX_GML2);
-            finalizeFiles.add(tempFile);
-            fos = new FileOutputStream(tempFile);
-            int i = input.read();
-            while (i != -1) {
-                fos.write(i);
-                i = input.read();
-            }
-            fos.flush();
-            fos.close();
+            File tempFile = FileConstants.writeTempFile(input);
             GTVectorDataBinding data = parseXML(tempFile);
-
             return data;
-        } catch (IOException e) {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (Exception e1) {
-                    LOGGER.trace(e.getMessage());
-                }
-            }
+        } catch (Exception e) {
             throw new IllegalArgumentException("Error while creating tempFile", e);
         }
     }

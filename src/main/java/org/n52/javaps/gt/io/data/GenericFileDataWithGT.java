@@ -84,6 +84,7 @@ import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.datahandler.generator.GeotiffGenerator;
 import org.n52.javaps.gt.io.datahandler.parser.GML2BasicParser;
 import org.n52.javaps.gt.io.datahandler.parser.GML3BasicParser;
+import org.n52.javaps.io.DecodingException;
 import org.n52.javaps.io.EncodingException;
 import org.n52.javaps.io.GenericFileDataConstants;
 import org.n52.shetland.ogc.wps.Format;
@@ -319,7 +320,6 @@ public class GenericFileDataWithGT {
             transaction.commit();
             return shp;
         } catch (Exception e1) {
-            e1.printStackTrace();
             transaction.rollback();
             throw new IOException(e1.getMessage());
         } finally {
@@ -433,7 +433,7 @@ public class GenericFileDataWithGT {
         return fileName;
     }
 
-    public GTVectorDataBinding getAsGTVectorDataBinding() {
+    public GTVectorDataBinding getAsGTVectorDataBinding() throws Exception, DecodingException {
 
         if (mimeType.equals(GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP)) {
             String tmpDirPath = System.getProperty("java.io.tmpdir");
@@ -468,14 +468,14 @@ public class GenericFileDataWithGT {
                 GenericFileDataConstants.MIME_TYPE_GML211) || mimeType.equals(GenericFileDataConstants.MIME_TYPE_GML212)
                 || mimeType.equals(GenericFileDataConstants.MIME_TYPE_GML2121)) {
             GML2BasicParser parser = new GML2BasicParser();
-            return parser.parse(getDataStream(), mimeType, null);
+            return (GTVectorDataBinding) parser.parse(null, getDataStream(), new Format(mimeType));
         }
         if (mimeType.equals(GenericFileDataConstants.MIME_TYPE_GML300) || mimeType.equals(
                 GenericFileDataConstants.MIME_TYPE_GML301) || mimeType.equals(GenericFileDataConstants.MIME_TYPE_GML310)
                 || mimeType.equals(GenericFileDataConstants.MIME_TYPE_GML311) || mimeType.equals(
                         GenericFileDataConstants.MIME_TYPE_GML321)) {
             GML3BasicParser parser = new GML3BasicParser();
-            return parser.parse(getDataStream(), mimeType, null);
+            return (GTVectorDataBinding) parser.parse(null, getDataStream(), new Format(mimeType));
         }
         throw new RuntimeException("Could not create GTVectorDataBinding for Input");
 

@@ -48,11 +48,8 @@
 package org.n52.javaps.gt.io.datahandler.parser;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
@@ -61,6 +58,7 @@ import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
+import org.n52.javaps.gt.io.util.FileConstants;
 import org.n52.javaps.io.Data;
 import org.n52.javaps.io.DecodingException;
 import org.n52.javaps.io.InputHandler;
@@ -82,28 +80,14 @@ public class GTBinZippedSHPParser extends AbstractPropertiesInputOutputHandlerFo
             InputStream stream,
             Format format) throws IOException, DecodingException {
         try {
-            String fileName = "tempfile" + UUID.randomUUID() + ".zip";
-            String tmpDirPath = System.getProperty("java.io.tmpdir");
-            File tempFile = new File(tmpDirPath + File.separatorChar + fileName);
-            finalizeFiles.add(tempFile); // mark tempFile for final delete
-            try {
-                FileOutputStream outputStream = new FileOutputStream(tempFile);
-                byte buf[] = new byte[4096];
-                int len;
-                while ((len = stream.read(buf)) > 0) {
-                    outputStream.write(buf, 0, len);
-                }
-                outputStream.close();
-                stream.close();
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            File tempFile = FileConstants.writeTempFile(stream, FileConstants.dot(FileConstants.SUFFIX_ZIP));
+            
             File shp = IOUtils.unzip(tempFile, "shp").get(0);
             DataStore store = new ShapefileDataStore(shp.toURI().toURL());
             SimpleFeatureCollection features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
 
             return new GTVectorDataBinding(features);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("An error has occurred while accessing provided data", e);
         }
     }

@@ -66,6 +66,7 @@ import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessOutputDescription;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
+import org.n52.javaps.gt.io.datahandler.parser.GML2Handler;
 import org.n52.javaps.io.Data;
 import org.n52.javaps.io.EncodingException;
 import org.n52.javaps.io.OutputHandler;
@@ -87,12 +88,8 @@ import org.slf4j.LoggerFactory;
         propertyFileName = "gml2basicgenerator.json")
 public class GML2BasicGenerator extends AbstractPropertiesInputOutputHandlerForFiles implements OutputHandler {
 
-
-    private static final String NS_URI_WFS = "http://www.opengis.net/wfs";
-    private static final String NS_URI_GML = "http://www.opengis.net/gml";
-
-    private static final String EMPTY_WFS_FEATURE_COLLECTION =
-            "<wfs:FeatureCollection xmlns:wfs=\"" + NS_URI_WFS + "\" xmlns:gml=\"" + NS_URI_GML + "\"/>";
+    private static final String EMPTY_WFS_FEATURE_COLLECTION = "<wfs:FeatureCollection xmlns:wfs=\""
+            + GML2Handler.NS_URI_WFS + "\" xmlns:gml=\"" + GML2Handler.NS_URI_GML + "\"/>";
 
     private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicGenerator.class);
 
@@ -160,7 +157,7 @@ public class GML2BasicGenerator extends AbstractPropertiesInputOutputHandlerForF
         String schemaLocation = SchemaRepository.getSchemaLocation(namespace);
 
         tx.addSchemaLocation(uri, schemaLocation);
-        tx.addSchemaLocation(NS_URI_WFS, "http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd");
+        tx.addSchemaLocation(GML2Handler.NS_URI_WFS, "http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd");
 
         try {
             tx.transform(fc, writer);

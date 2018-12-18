@@ -49,7 +49,6 @@ package org.n52.javaps.gt.io.datahandler.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -59,7 +58,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -73,6 +71,7 @@ import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.gt.io.GTHelper;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
+import org.n52.javaps.gt.io.util.FileConstants;
 import org.n52.javaps.io.Data;
 import org.n52.javaps.io.DecodingException;
 import org.n52.javaps.io.InputHandler;
@@ -83,7 +82,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This parser handles xml files compliant to gmlpacket.xsd
@@ -106,34 +104,6 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
         addSupportedBinding(GTVectorDataBinding.class);
     }
 
-    public GTVectorDataBinding parse(InputStream stream,
-            String mimeType,
-            String schema) {
-
-        FileOutputStream fos = null;
-        try {
-            File tempFile = File.createTempFile("wps", "tmp");
-            finalizeFiles.add(tempFile);
-            fos = new FileOutputStream(tempFile);
-            int i = stream.read();
-            while (i != -1) {
-                fos.write(i);
-                i = stream.read();
-            }
-            fos.flush();
-            fos.close();
-            GTVectorDataBinding data = parseXML(tempFile);
-            return data;
-        } catch (IOException e) {
-            if (fos != null)
-                try {
-                    fos.close();
-                } catch (Exception e1) {
-                }
-            throw new IllegalArgumentException("Error while creating tempFile", e);
-        }
-    }
-
     private GTVectorDataBinding parseXML(File file) {
 
         SimpleFeatureCollection fc = parseFeatureCollection(file);
@@ -154,7 +124,7 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
      * @return The parsed SimpleFeatureCollection
      */
     public SimpleFeatureCollection parseFeatureCollection(File file) {
-        QName schematypeTuple = determineFeatureTypeSchema(file);
+        QName schematypeTuple = gtHelper.determineFeatureTypeSchema(file);
 
         boolean schemaLocationIsRelative = false;
         if (!(schematypeTuple.getLocalPart().contains("://") || schematypeTuple.getLocalPart().contains("file:"))) {
@@ -224,7 +194,7 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
             if (parsedData instanceof FeatureCollection) {
                 fc = (SimpleFeatureCollection) parsedData;
             } else if (parsedData instanceof HashMap) {
-                List<?> possibleSimpleFeatureList = ((ArrayList<?>) ((HashMap<?, ?>) parsedData).get("featureMember"));
+                List<?> possibleSimpleFeatureList = (ArrayList<?>) ((HashMap<?, ?>) parsedData).get("featureMember");
 
                 if (possibleSimpleFeatureList != null) {
                     List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
@@ -234,7 +204,7 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
                     for (Object possibleSimpleFeature : possibleSimpleFeatureList) {
 
                         if (possibleSimpleFeature instanceof SimpleFeature) {
-                            SimpleFeature sf = ((SimpleFeature) possibleSimpleFeature);
+                            SimpleFeature sf = (SimpleFeature) possibleSimpleFeature;
                             if (sft == null) {
                                 sft = sf.getType();
                             }
@@ -258,7 +228,7 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
                             SimpleFeatureType sft = null;
                             for (Object listValue : list) {
                                 if (listValue instanceof SimpleFeature) {
-                                    SimpleFeature sf = ((SimpleFeature) listValue);
+                                    SimpleFeature sf = (SimpleFeature) listValue;
                                     if (sft == null) {
                                         sft = sf.getType();
                                     }
@@ -280,51 +250,17 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
         }
         return fc;
     }
-
-    private QName determineFeatureTypeSchema(File file) {
-        try {
-            GML2Handler handler = new GML2Handler();
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.newSAXParser().parse(new FileInputStream(file), (DefaultHandler) handler);
-            String schemaUrl = handler.getSchemaUrl();
-            if (schemaUrl == null) {
-                return null;
-            }
-            String namespaceURI = handler.getNameSpaceURI();
-            return new QName(namespaceURI, schemaUrl);
-
-        } catch (Exception e) {
-            LOGGER.error("Exception while trying to determine schema of FeatureType.", e);
-            throw new IllegalArgumentException(e);
-        }
-    }
-
+    
     @Override
     public Data<?> parse(TypedProcessInputDescription<?> description,
             InputStream input,
             Format format) throws IOException, DecodingException {
 
-        FileOutputStream fos = null;
         try {
-            File tempFile = File.createTempFile("wps", "tmp");
-            finalizeFiles.add(tempFile);
-            fos = new FileOutputStream(tempFile);
-            int i = input.read();
-            while (i != -1) {
-                fos.write(i);
-                i = input.read();
-            }
-            fos.flush();
-            fos.close();
+            File tempFile = FileConstants.writeTempFile(input);
             GTVectorDataBinding data = parseXML(tempFile);
             return data;
-        } catch (IOException e) {
-            if (fos != null)
-                try {
-                    fos.close();
-                } catch (Exception e1) {
-                }
+        } catch (Exception e) {
             throw new IllegalArgumentException("Error while creating tempFile", e);
         }
     }

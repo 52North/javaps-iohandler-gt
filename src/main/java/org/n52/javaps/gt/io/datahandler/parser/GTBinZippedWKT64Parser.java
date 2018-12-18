@@ -48,15 +48,12 @@
 package org.n52.javaps.gt.io.datahandler.parser;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -65,12 +62,12 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.WKTReader2;
-import org.geotools.referencing.CRS;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.gt.io.GTHelper;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
+import org.n52.javaps.gt.io.util.FileConstants;
 import org.n52.javaps.io.Data;
 import org.n52.javaps.io.DecodingException;
 import org.n52.javaps.io.InputHandler;
@@ -80,14 +77,11 @@ import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.ParseException;
 
 /**
  * @author Bastian Schaeffer; Matthias Mueller, TU Dresden
@@ -102,7 +96,7 @@ public class GTBinZippedWKT64Parser extends AbstractPropertiesInputOutputHandler
 
     @Inject
     private GTHelper gtHelper;
-
+    
     public GTBinZippedWKT64Parser() {
         super();
         addSupportedBinding(GTVectorDataBinding.class);
@@ -112,19 +106,16 @@ public class GTBinZippedWKT64Parser extends AbstractPropertiesInputOutputHandler
             CoordinateReferenceSystem coordinateReferenceSystem) {
 
         SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
-        if (coordinateReferenceSystem == null) {
-            try {
-                coordinateReferenceSystem = CRS.decode("EPSG:4326");
-            } catch (FactoryException e) {
-                LOGGER.error(e.getMessage(), e);
-                throw new RuntimeException("An error has occurred while trying to decode CRS EPSG:4326", e);
-            }
-            typeBuilder.setCRS(coordinateReferenceSystem);
+        
+        CoordinateReferenceSystem crsCopy = coordinateReferenceSystem;
+        
+        if (crsCopy == null) {
+            crsCopy = gtHelper.getDefaultCRS();    
+            typeBuilder.setCRS(crsCopy);
         }
 
-        String namespace = "http://www.opengis.net/gml";
-        typeBuilder.setNamespaceURI(namespace);
-        Name nameType = new NameImpl(namespace, "Feature");
+        typeBuilder.setNamespaceURI(GML2Handler.NS_URI_GML);
+        Name nameType = new NameImpl(GML2Handler.NS_URI_GML, "Feature");
         typeBuilder.setName(nameType);
         typeBuilder.add("GEOMETRY", geometries.get(0).getClass());
 
@@ -148,29 +139,11 @@ public class GTBinZippedWKT64Parser extends AbstractPropertiesInputOutputHandler
             InputStream stream,
             Format format) throws IOException, DecodingException {
         try {
-
-            String fileName = "tempfile" + UUID.randomUUID() + ".zip";
-            String tmpDirPath = System.getProperty("java.io.tmpdir");
-            File tempFile = new File(tmpDirPath + File.separatorChar + fileName);
-            finalizeFiles.add(tempFile); // mark tempFile for final delete
-            try {
-                FileOutputStream outputStream = new FileOutputStream(tempFile);
-                byte buf[] = new byte[4096];
-                int len;
-                while ((len = stream.read(buf)) > 0) {
-                    outputStream.write(buf, 0, len);
-                }
-                outputStream.close();
-                stream.close();
-            } catch (FileNotFoundException e) {
-                LOGGER.error(e.getMessage(), e);
-                throw new RuntimeException(e);
-            }
-
-            finalizeFiles.add(tempFile); // mark for final delete
-            stream.close();
+            
+            File tempFile = FileConstants.writeTempFile(stream);
+            
             List<File> wktFiles = IOUtils.unzip(tempFile, "wkt");
-            finalizeFiles.addAll(wktFiles); // mark for final delete
+            finalizeFiles.addAll(wktFiles);
 
             if (wktFiles == null || wktFiles.size() == 0) {
                 throw new RuntimeException("Cannot find a shapefile inside the zipped file.");
@@ -188,16 +161,15 @@ public class GTBinZippedWKT64Parser extends AbstractPropertiesInputOutputHandler
                 Reader fileReader = new FileReader(wktFile);
 
                 WKTReader2 wktReader = new WKTReader2();
-                com.vividsolutions.jts.geom.Geometry geometry = wktReader.read(fileReader);
+                Geometry geometry = wktReader.read(fileReader);
                 geometries.add(geometry);
             }
 
-            CoordinateReferenceSystem coordinateReferenceSystem = CRS.decode("EPSG:4326");
             SimpleFeatureCollection inputFeatureCollection = createFeatureCollection(geometries,
-                    coordinateReferenceSystem);
+                    gtHelper.getDefaultCRS());
 
             return new GTVectorDataBinding(inputFeatureCollection);
-        } catch (IOException | FactoryException | ParseException e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException("An error has occurred while accessing provided data", e);
         }

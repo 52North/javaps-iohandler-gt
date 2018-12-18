@@ -50,14 +50,11 @@ package org.n52.javaps.gt.io.datahandler.generator;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
-import javax.xml.namespace.QName;
 
 import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.DefaultTransaction;
@@ -65,22 +62,18 @@ import org.geotools.data.FeatureStore;
 import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
 import org.geotools.referencing.CRS;
 import org.n52.javaps.gt.io.GTHelper;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.io.Data;
-import org.n52.javaps.io.SchemaRepository;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 public class GTBinDirectorySHPGenerator {
 
@@ -100,37 +93,9 @@ public class GTBinDirectorySHPGenerator {
         GTVectorDataBinding binding = (GTVectorDataBinding) data;
         FeatureCollection<?, ?> originalCollection = binding.getPayload();
 
-        FeatureCollection<SimpleFeatureType, SimpleFeature> collection = createCorrectFeatureCollection(
-                originalCollection);
+        SimpleFeatureCollection collection = gtHelper.createCorrectFeatureCollection(originalCollection);
 
         return createShapefileDirectory(collection, parent);
-    }
-
-    private FeatureCollection<SimpleFeatureType, SimpleFeature> createCorrectFeatureCollection(FeatureCollection<?,
-            ?> fc) {
-
-        List<SimpleFeature> featureList = new ArrayList<>();
-        SimpleFeatureType featureType = null;
-        FeatureIterator<?> iterator = fc.features();
-        String uuid = UUID.randomUUID().toString();
-        int i = 0;
-        while (iterator.hasNext()) {
-            SimpleFeature feature = (SimpleFeature) iterator.next();
-
-            if (i == 0) {
-                featureType = gtHelper.createFeatureType(feature.getProperties(), (Geometry) feature
-                        .getDefaultGeometry(), uuid, feature.getFeatureType().getCoordinateReferenceSystem());
-                QName qname = gtHelper.createGML3SchemaForFeatureType(featureType);
-                SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
-            }
-            SimpleFeature resultFeature = gtHelper.createFeature("ID" + i, (Geometry) feature.getDefaultGeometry(),
-                    featureType, feature.getProperties());
-
-            featureList.add(resultFeature);
-            i++;
-        }
-        return gtHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList);
-
     }
 
     /**

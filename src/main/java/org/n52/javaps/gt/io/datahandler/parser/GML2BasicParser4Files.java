@@ -47,18 +47,15 @@
  */
 package org.n52.javaps.gt.io.datahandler.parser;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
-import org.geotools.data.simple.SimpleFeatureCollection;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.gt.io.data.GenericFileDataWithGT;
+import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
 import org.n52.javaps.io.Data;
@@ -89,48 +86,22 @@ public class GML2BasicParser4Files extends AbstractPropertiesInputOutputHandlerF
         addSupportedBinding(GenericFileDataWithGTBinding.class);
     }
 
-    private GenericFileDataWithGTBinding parseXML(File file) {
-
-        SimpleFeatureCollection fc = gml2BasicParser.parseSimpleFeatureCollection(file);
-
-        GenericFileDataWithGTBinding data = null;
-        try {
-            data = new GenericFileDataWithGTBinding(new GenericFileDataWithGT(fc));
-        } catch (IOException e) {
-            LOGGER.error("Exception while trying to wrap GenericFileData around GML2 FeatureCollection.", e);
-        }
-
-        return data;
-    }
-
     @Override
     public Data<?> parse(TypedProcessInputDescription<?> description,
             InputStream stream,
             Format format) throws IOException, DecodingException {
 
-        FileOutputStream fos = null;
-        try {
-            File tempFile = File.createTempFile(UUID.randomUUID().toString(), ".gml2");
-            finalizeFiles.add(tempFile); // mark for final delete
-            fos = new FileOutputStream(tempFile);
-            int i = stream.read();
-            while (i != -1) {
-                fos.write(i);
-                i = stream.read();
-            }
-            fos.flush();
-            fos.close();
-            GenericFileDataWithGTBinding data = parseXML(tempFile);
+        GTVectorDataBinding gtVectorDataBinding = (GTVectorDataBinding) gml2BasicParser.parse(description, stream,
+                format);
 
-            return data;
+        GenericFileDataWithGTBinding data = null;
+        try {
+            data = new GenericFileDataWithGTBinding(new GenericFileDataWithGT(gtVectorDataBinding.getPayload()));
         } catch (IOException e) {
-            if (fos != null)
-                try {
-                    fos.close();
-                } catch (Exception e1) {
-                }
-            throw new IllegalArgumentException("Error while creating tempFile", e);
+            LOGGER.error("Exception while trying to wrap GenericFileData around GML2 FeatureCollection.", e);
         }
+
+        return data;
     }
 
 }

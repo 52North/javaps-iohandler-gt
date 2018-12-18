@@ -48,20 +48,26 @@
 package org.n52.javaps.gt.io;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.namespace.QName;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.GeometryAttributeImpl;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
@@ -74,6 +80,8 @@ import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.service.ServiceSettings;
+import org.n52.javaps.gt.io.datahandler.parser.GML2Handler;
+import org.n52.javaps.io.SchemaRepository;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -89,6 +97,7 @@ import org.opengis.geometry.primitive.Curve;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.helpers.DefaultHandler;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -102,11 +111,14 @@ import com.vividsolutions.jts.geom.Polygon;
 
 @Configurable
 public class GTHelper {
+
     private static Logger LOGGER = LoggerFactory.getLogger(GTHelper.class);
 
-    private String serviceURL;
-
     private static final String GEOMETRY_NAME = "the_geom";
+
+    private static final String LOCATION = "location";
+
+    private String serviceURL;
 
     @Setting(ServiceSettings.SERVICE_URL)
     public void setServiceURL(URI serviceURL) {
@@ -122,16 +134,8 @@ public class GTHelper {
             Geometry newGeometry,
             String uuid,
             CoordinateReferenceSystem coordinateReferenceSystem) {
-        String namespace = "http://www.52north.org/" + uuid;
 
-        SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
-        if (coordinateReferenceSystem == null) {
-            coordinateReferenceSystem = getDefaultCRS();
-        }
-        typeBuilder.setCRS(coordinateReferenceSystem);
-        typeBuilder.setNamespaceURI(namespace);
-        Name nameType = new NameImpl(namespace, "Feature-" + uuid);
-        typeBuilder.setName(nameType);
+        SimpleFeatureTypeBuilder typeBuilder = createFeatureTypeBuilder(uuid, coordinateReferenceSystem);
 
         for (Property property : attributes) {
             if (property.getValue() != null) {
@@ -145,14 +149,14 @@ public class GTHelper {
                         || binding.equals(MultiPoint.class) || binding.equals(MultiPolygon.class) || binding.equals(
                                 MultiSurface.class) || binding.equals(LineString.class) || binding.equals(Point.class)
                         || binding.equals(LineString.class) || binding.equals(Polygon.class)) && !name.equals(
-                                "location")) {
+                                LOCATION)) {
 
-                    if (newGeometry.getClass().equals(Point.class) && (!name.equals("location"))) {
+                    if (newGeometry.getClass().equals(Point.class) && (!name.equals(LOCATION))) {
                         typeBuilder.add(GEOMETRY_NAME, MultiPoint.class);
-                    } else if (newGeometry.getClass().equals(LineString.class) && (!name.equals("location"))) {
+                    } else if (newGeometry.getClass().equals(LineString.class) && (!name.equals(LOCATION))) {
 
                         typeBuilder.add(GEOMETRY_NAME, MultiLineString.class);
-                    } else if (newGeometry.getClass().equals(Polygon.class) && (!name.equals("location"))) {
+                    } else if (newGeometry.getClass().equals(Polygon.class) && (!name.equals(LOCATION))) {
 
                         typeBuilder.add(GEOMETRY_NAME, MultiPolygon.class);
                     } else if (!binding.equals(Object.class)) {
@@ -162,12 +166,12 @@ public class GTHelper {
                     if (!name.equals("location") && binding.equals(Object.class)) {
                         try {
                             Geometry g = (Geometry) property.getValue();
-                            if (g.getClass().equals(Point.class) && (!name.equals("location"))) {
+                            if (g.getClass().equals(Point.class) && (!name.equals(LOCATION))) {
                                 typeBuilder.add(GEOMETRY_NAME, MultiPoint.class);
-                            } else if (g.getClass().equals(LineString.class) && (!name.equals("location"))) {
+                            } else if (g.getClass().equals(LineString.class) && (!name.equals(LOCATION))) {
 
                                 typeBuilder.add(GEOMETRY_NAME, MultiLineString.class);
-                            } else if (g.getClass().equals(Polygon.class) && (!name.equals("location"))) {
+                            } else if (g.getClass().equals(Polygon.class) && (!name.equals(LOCATION))) {
 
                                 typeBuilder.add(GEOMETRY_NAME, MultiPolygon.class);
                             } else {
@@ -178,7 +182,7 @@ public class GTHelper {
 
                         }
 
-                    } else if (!name.equals("location")) {
+                    } else if (!name.equals(LOCATION)) {
                         typeBuilder.add(name, binding);
                     }
                 }
@@ -192,8 +196,7 @@ public class GTHelper {
         return featureType;
     }
 
-    public SimpleFeatureType createFeatureType(Geometry newGeometry,
-            String uuid,
+    private SimpleFeatureTypeBuilder createFeatureTypeBuilder(String uuid,
             CoordinateReferenceSystem coordinateReferenceSystem) {
         String namespace = "http://www.52north.org/" + uuid;
 
@@ -205,6 +208,14 @@ public class GTHelper {
         typeBuilder.setNamespaceURI(namespace);
         Name nameType = new NameImpl(namespace, "Feature-" + uuid);
         typeBuilder.setName(nameType);
+        return typeBuilder;
+    }
+
+    public SimpleFeatureType createFeatureType(Geometry newGeometry,
+            String uuid,
+            CoordinateReferenceSystem coordinateReferenceSystem) {
+
+        SimpleFeatureTypeBuilder typeBuilder = createFeatureTypeBuilder(uuid, coordinateReferenceSystem);
 
         typeBuilder.add(GEOMETRY_NAME, newGeometry.getClass());
 
@@ -481,7 +492,7 @@ public class GTHelper {
         }
     }
 
-    private CoordinateReferenceSystem getDefaultCRS() {
+    public CoordinateReferenceSystem getDefaultCRS() {
 
         try {
             return CRS.decode("EPSG:4326");
@@ -513,13 +524,11 @@ public class GTHelper {
                         if (g != null) {
                             GeometryAttribute oldGeometryDescriptor = feature.getDefaultGeometryProperty();
                             GeometryType type = new GeometryTypeImpl(property.getName(), (Class<
-                                    ?>) oldGeometryDescriptor.getType().getBinding(), oldGeometryDescriptor
-                                            .getType().getCoordinateReferenceSystem(), oldGeometryDescriptor
-                                                    .getType().isIdentified(), oldGeometryDescriptor.getType()
-                                                            .isAbstract(), oldGeometryDescriptor.getType()
-                                                                    .getRestrictions(), oldGeometryDescriptor
-                                                                            .getType().getSuper(),
-                                    oldGeometryDescriptor.getType().getDescription());
+                                    ?>) oldGeometryDescriptor.getType().getBinding(), oldGeometryDescriptor.getType()
+                                            .getCoordinateReferenceSystem(), oldGeometryDescriptor.getType()
+                                                    .isIdentified(), oldGeometryDescriptor.getType().isAbstract(),
+                                    oldGeometryDescriptor.getType().getRestrictions(), oldGeometryDescriptor.getType()
+                                            .getSuper(), oldGeometryDescriptor.getType().getDescription());
 
                             GeometryDescriptor newGeometryDescriptor = new GeometryDescriptorImpl(type, property
                                     .getName(), 0, 1, true, null);
@@ -538,6 +547,53 @@ public class GTHelper {
             }
         }
 
+    }
+
+    public SimpleFeatureCollection createCorrectFeatureCollection(FeatureCollection<?, ?> fc) {
+
+        List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
+        SimpleFeatureType featureType = null;
+        FeatureIterator<?> iterator = fc.features();
+        String uuid = UUID.randomUUID().toString();
+        int i = 0;
+        while (iterator.hasNext()) {
+            SimpleFeature feature = (SimpleFeature) iterator.next();
+
+            if (i == 0) {
+                featureType = createFeatureType(feature.getProperties(), (Geometry) feature.getDefaultGeometry(), uuid,
+                        feature.getFeatureType().getCoordinateReferenceSystem());
+                QName qname = createGML3SchemaForFeatureType(featureType);
+                SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
+            }
+            SimpleFeature resultFeature = createFeature("ID" + i, (Geometry) feature.getDefaultGeometry(), featureType,
+                    feature.getProperties());
+
+            simpleFeatureList.add(resultFeature);
+            i++;
+        }
+        iterator.close();
+
+        ListFeatureCollection resultFeatureCollection = new ListFeatureCollection(featureType, simpleFeatureList);
+        return resultFeatureCollection;
+    }
+
+    public QName determineFeatureTypeSchema(File file) {
+        try {
+            GML2Handler handler = new GML2Handler();
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            factory.newSAXParser().parse(new FileInputStream(file), (DefaultHandler) handler);
+            String schemaUrl = handler.getSchemaUrl();
+            if (schemaUrl == null) {
+                return null;
+            }
+            String namespaceURI = handler.getNameSpaceURI();
+            return new QName(namespaceURI, schemaUrl);
+
+        } catch (Exception e) {
+            LOGGER.error("Exception while trying to determine schema of FeatureType.", e);
+            throw new IllegalArgumentException(e);
+        }
     }
 
 }

@@ -49,7 +49,6 @@ package org.n52.javaps.gt.io.datahandler.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -73,6 +72,7 @@ import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.gt.io.GTHelper;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
+import org.n52.javaps.gt.io.util.FileConstants;
 import org.n52.javaps.io.Data;
 import org.n52.javaps.io.DecodingException;
 import org.n52.javaps.io.InputHandler;
@@ -107,6 +107,21 @@ public class GML32BasicParser extends AbstractPropertiesInputOutputHandlerForFil
 
     public void setConfiguration(Configuration config) {
         this.configuration = config;
+    }
+
+    @Override
+    public Data<?> parse(TypedProcessInputDescription<?> description,
+            InputStream input,
+            Format format) throws IOException, DecodingException {
+        try {
+            
+            File tempFile = FileConstants.writeTempFile(input);
+
+            QName schematypeTuple = determineFeatureTypeSchema(tempFile);
+            return parse(new FileInputStream(tempFile), schematypeTuple);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error while creating tempFile", e);
+        }
     }
 
     public GTVectorDataBinding parse(InputStream input,
@@ -178,25 +193,25 @@ public class GML32BasicParser extends AbstractPropertiesInputOutputHandlerForFil
         /*
          * TODO all if-statements are nonsense.. clean up
          */
-        Configuration configuration = null;
+        Configuration resolvedConfiguration = null;
         if (schematypeTuple != null) {
             String schemaLocation = schematypeTuple.getLocalPart();
             if (schemaLocation.startsWith("http://schemas.opengis.net/gml/3.2")) {
-                configuration = new GMLConfiguration();
+                resolvedConfiguration = new GMLConfiguration();
             } else {
                 if (schemaLocation != null && schematypeTuple.getNamespaceURI() != null) {
                     SchemaRepository.registerSchemaLocation(schematypeTuple.getNamespaceURI(), schemaLocation);
-                    configuration = new ApplicationSchemaConfiguration(schematypeTuple.getNamespaceURI(),
+                    resolvedConfiguration = new ApplicationSchemaConfiguration(schematypeTuple.getNamespaceURI(),
                             schemaLocation);
                 } else {
-                    configuration = new GMLConfiguration();
+                    resolvedConfiguration = new GMLConfiguration();
                 }
             }
         } else {
-            configuration = new GMLConfiguration();
+            resolvedConfiguration = new GMLConfiguration();
         }
 
-        return configuration;
+        return resolvedConfiguration;
     }
 
     private QName determineFeatureTypeSchema(File file) {
@@ -228,35 +243,6 @@ public class GML32BasicParser extends AbstractPropertiesInputOutputHandlerForFil
         GML32BasicParser parser = new GML32BasicParser();
         parser.setConfiguration(config);
         return parser;
-    }
-
-    @Override
-    public Data<?> parse(TypedProcessInputDescription<?> description,
-            InputStream input,
-            Format format) throws IOException, DecodingException {
-        FileOutputStream fos = null;
-        try {
-            File tempFile = File.createTempFile("wps", "tmp");
-            finalizeFiles.add(tempFile);
-            fos = new FileOutputStream(tempFile);
-            int i = input.read();
-            while (i != -1) {
-                fos.write(i);
-                i = input.read();
-            }
-            fos.flush();
-            fos.close();
-
-            QName schematypeTuple = determineFeatureTypeSchema(tempFile);
-            return parse(new FileInputStream(tempFile), schematypeTuple);
-        } catch (IOException e) {
-            if (fos != null)
-                try {
-                    fos.close();
-                } catch (Exception e1) {
-                }
-            throw new IllegalArgumentException("Error while creating tempFile", e);
-        }
     }
 
 }

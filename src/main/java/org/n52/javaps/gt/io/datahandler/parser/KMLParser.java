@@ -48,7 +48,6 @@
 package org.n52.javaps.gt.io.datahandler.parser;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -61,6 +60,7 @@ import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
+import org.n52.javaps.gt.io.util.FileConstants;
 import org.n52.javaps.io.Data;
 import org.n52.javaps.io.DecodingException;
 import org.n52.javaps.io.InputHandler;
@@ -99,26 +99,11 @@ public class KMLParser extends AbstractPropertiesInputOutputHandlerForFiles impl
     public Data<?> parse(TypedProcessInputDescription<?> description,
             InputStream stream,
             Format format) throws IOException, DecodingException {
-        FileOutputStream fos = null;
         try {
-            File tempFile = File.createTempFile("kml", "tmp");
-            finalizeFiles.add(tempFile); // mark for final delete
-            fos = new FileOutputStream(tempFile);
-            int i = stream.read();
-            while (i != -1) {
-                fos.write(i);
-                i = stream.read();
-            }
-            fos.flush();
-            fos.close();
+            File tempFile = FileConstants.writeTempFile(stream, FileConstants.dot(FileConstants.SUFFIX_KML));
             GTVectorDataBinding data = parseXML(tempFile);
             return data;
-        } catch (IOException e) {
-            if (fos != null)
-                try {
-                    fos.close();
-                } catch (Exception e1) {
-                }
+        } catch (Exception e) {
             throw new IllegalArgumentException("Error while creating tempFile", e);
         }
     }
