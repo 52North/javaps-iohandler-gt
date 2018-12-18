@@ -47,54 +47,26 @@
  */
 package org.n52.wps.io.test.data;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import static org.junit.Assert.assertTrue;
 
+import java.io.InputStream;
+
+import org.junit.Test;
 import org.n52.javaps.gt.io.data.GenericFileDataWithGT;
 import org.n52.javaps.io.GenericFileDataConstants;
 
-import junit.framework.TestCase;
+public class GenericFileDataTest{
 
-public class GenericFileDataTest extends TestCase{
-
+    @Test
     public void testUnzipData(){
 
-        File f = new File(this.getClass().getProtectionDomain().getCodeSource()
-                .getLocation().getFile());
-
-        String projectRoot = f.getParentFile().getParentFile().getParent();
-
-        String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/tasmania_roads.zip";
-
-        try {
-            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-        } catch (UnsupportedEncodingException e1) {
-            fail(e1.getMessage());
-        }
-
-        InputStream input = null;
-
-        /*
-         * create a GenericFileData instance out of a zipped shapefile
-         */
-        try {
-            input = new FileInputStream(new File(testFilePath));
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
-        }
-
+        InputStream input = getClass().getClassLoader().getResourceAsStream("tasmania_roads.zip");
 
         GenericFileDataWithGT genericFileData = new GenericFileDataWithGT(input, GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP);
 
-        String unzippedFilePath = genericFileData.writeData(new File(System.getProperty("java.io.tmpdir")));
+        String unzippedFilePath = genericFileData.getBaseFile(true).getAbsolutePath();
 
         assertTrue(unzippedFilePath != null && !unzippedFilePath.equals(""));
-
-
     }
 
 }

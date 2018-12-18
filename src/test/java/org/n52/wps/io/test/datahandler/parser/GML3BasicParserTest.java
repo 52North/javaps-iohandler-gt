@@ -47,65 +47,43 @@
  */
 package org.n52.wps.io.test.datahandler.parser;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
+import javax.inject.Inject;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.datahandler.parser.GML3BasicParser;
-import org.n52.wps.io.test.datahandler.AbstractTestCase;
+import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.javaps.gt.io.datahandler.parser.GML3BasicParser;
+import org.n52.javaps.io.DecodingException;
+import org.n52.javaps.test.AbstractTestCase;
+import org.n52.shetland.ogc.wps.Format;
 
-public class GML3BasicParserTest extends AbstractTestCase<GML3BasicParser> {
+public class GML3BasicParserTest extends AbstractTestCase {
+
+    @Inject
+    private GML3BasicParser dataHandler;
 
     @Test
     public void testParser() {
 
-        if(!isDataHandlerActive()){
-            return;
-        }
+        InputStream input = getResource("spearfish_restricted_sites_gml3.xml");
 
-        String testFilePath = projectRoot
-                + "/52n-wps-io-geotools/src/test/resources/spearfish_restricted_sites_gml3.xml";
-
+        GTVectorDataBinding theBinding = null;
         try {
-            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-        } catch (UnsupportedEncodingException e1) {
-            e1.printStackTrace();
-            Assert.fail(e1.getMessage());
+            theBinding = (GTVectorDataBinding) dataHandler.parse(null, input, new Format("text/xml; subtype=gml/3.1.1", StandardCharsets.UTF_8,
+                    "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd"));
+        } catch (IOException | DecodingException e) {
+            fail(e.getMessage());
         }
 
-//        String[] mimetypes = theParser.getSupportedFormats();
-
-        InputStream input = null;
-
-        try {
-            input = new FileInputStream(new File(testFilePath));
-        } catch (FileNotFoundException e) {
-            Assert.fail(e.getMessage());
-        }
-
-        // for (String mimetype : mimetypes) {
-
-        GTVectorDataBinding theBinding = dataHandler.parse(input,
-                "text/xml; subtype=gml/3.2.1",
-                "http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
-
+        Assert.assertNotNull(theBinding);
         Assert.assertNotNull(theBinding.getPayload());
-        Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
-        Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
-        // }
-
-    }
-
-    @Override
-    protected void initializeDataHandler() {
-        dataHandler = new GML3BasicParser();
     }
 
 }

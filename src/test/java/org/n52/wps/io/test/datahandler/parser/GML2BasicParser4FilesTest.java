@@ -47,15 +47,20 @@
  */
 package org.n52.wps.io.test.datahandler.parser;
 
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+
+import javax.inject.Inject;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
-import org.n52.wps.io.datahandler.parser.GML2BasicParser4Files;
-import org.n52.wps.io.test.datahandler.AbstractTestCase;
-import org.n52.wps.webapp.api.FormatEntry;
+import org.n52.javaps.gt.io.data.binding.complex.GenericFileDataWithGTBinding;
+import org.n52.javaps.gt.io.datahandler.parser.GML2BasicParser4Files;
+import org.n52.javaps.io.DecodingException;
+import org.n52.javaps.test.AbstractTestCase;
+import org.n52.shetland.ogc.wps.Format;
 
 /**
  * This class is for testing the GML2BasicParser4Files.
@@ -63,36 +68,29 @@ import org.n52.wps.webapp.api.FormatEntry;
  * @author Benjamin Pross(bpross-52n)
  *
  */
-public class GML2BasicParser4FilesTest extends
-        AbstractTestCase<GML2BasicParser4Files> {
+public class GML2BasicParser4FilesTest extends AbstractTestCase {
+
+    @Inject
+    private GML2BasicParser4Files dataHandler;
 
     @Test
     public void testParser() {
 
-        if (!isDataHandlerActive()) {
-            return;
+        Format format = dataHandler.getSupportedFormats().iterator().next();
+
+        InputStream input = getResource("tasmania_roads_gml2.xml");
+
+        GenericFileDataWithGTBinding theBinding = null;
+        try {
+            theBinding = (GenericFileDataWithGTBinding) dataHandler.parse(null, input, format);
+        } catch (IOException | DecodingException e) {
+            fail(e.getMessage());
         }
 
-        List<FormatEntry> formats = dataHandler.getSupportedFullFormats();
-
-        FormatEntry format = formats.get(0);
-
-        String mimeType = format.getMimeType();
-        String schema = format.getSchema();
-
-        InputStream input = getClass().getResourceAsStream("/tasmania_roads_gml2.xml");
-
-        GenericFileDataWithGTBinding theBinding = dataHandler.parse(input, mimeType,
-                schema);
-
+        Assert.assertNotNull(theBinding);
         Assert.assertNotNull(theBinding.getPayload());
         Assert.assertNotNull(theBinding.getPayload().getBaseFile(true).exists());
 
-    }
-
-    @Override
-    protected void initializeDataHandler() {
-        dataHandler = new GML2BasicParser4Files();
     }
 
 }

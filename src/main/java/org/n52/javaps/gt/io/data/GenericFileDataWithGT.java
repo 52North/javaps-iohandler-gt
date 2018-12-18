@@ -503,7 +503,7 @@ public class GenericFileDataWithGT {
             }
 
         }
-        if (unzipIfPossible && extension.contains(ZIP)) {
+        if (unzipIfPossible && extension != null && extension.contains(ZIP)) {
             try {
                 File tempFile1 = File.createTempFile(UUID.randomUUID().toString(), "");
                 File dir = new File(tempFile1.getParentFile() + "/" + UUID.randomUUID().toString());

@@ -47,87 +47,61 @@
  */
 package org.n52.wps.io.test.datahandler.parser;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+
+import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
 import org.junit.Assert;
 import org.junit.Test;
-import org.opengis.feature.Feature;
-import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.datahandler.parser.GTBinZippedWKT64Parser;
-import org.n52.wps.io.test.datahandler.AbstractTestCase;
-
+import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.javaps.gt.io.datahandler.parser.GTBinZippedWKT64Parser;
+import org.n52.javaps.io.DecodingException;
+import org.n52.javaps.test.AbstractTestCase;
+import org.n52.shetland.ogc.wps.Format;
 
 /**
- * This class is for testing the GTBinZippedWKT64Parser. A base64 encoded zip file containing WKT files will be
- * read into a Base64InputStream. This stream will be handed to the parser.
- * It will be checked, whether the resulting FeatureCollection not null, not empty and whether it can be written to a shapefile.
- * The parsed geometries are printed out.
+ * This class is for testing the GTBinZippedWKT64Parser. A base64 encoded zip
+ * file containing WKT files will be read into a Base64InputStream. This stream
+ * will be handed to the parser. It will be checked, whether the resulting
+ * FeatureCollection not null, not empty and whether it can be written to a
+ * shapefile. The parsed geometries are printed out.
  *
  * @author BenjaminPross
  *
  */
-public class GTBinZippedWKT64ParserTest extends AbstractTestCase<GTBinZippedWKT64Parser> {
+public class GTBinZippedWKT64ParserTest extends AbstractTestCase {
+
+    @Inject
+    private GTBinZippedWKT64Parser dataHandler;
 
     @Test
-    public void testParser(){
+    public void testParser() {
 
-        if(!isDataHandlerActive()){
-            return;
-        }
+        InputStream input = new Base64InputStream(getResource("wktgeometries.base64.zip"));
 
-        String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/wktgeometries.base64.zip";
-
+        Format format = dataHandler.getSupportedFormats().iterator().next();
+        
+        GTVectorDataBinding theBinding = null;
         try {
-            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-        } catch (UnsupportedEncodingException e1) {
-            Assert.fail(e1.getMessage());
+            theBinding = (GTVectorDataBinding) dataHandler.parse(null, input, format);
+        } catch (IOException | DecodingException e) {
+            fail(e.getMessage());
         }
 
-        String[] mimetypes = dataHandler.getSupportedFormats();
+        Assert.assertNotNull(theBinding);
+        Assert.assertNotNull(theBinding.getPayload());
+        Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
-        InputStream input = null;
+        FeatureCollection<?, ?> collection = theBinding.getPayload();
 
-        for (String mimetype : mimetypes) {
+        Assert.assertTrue(!collection.isEmpty());
+        Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
 
-            try {
-
-                input = new Base64InputStream(new FileInputStream(new File(testFilePath)));
-            } catch (FileNotFoundException e) {
-                Assert.fail(e.getMessage());
-            }
-
-            GTVectorDataBinding theBinding = dataHandler.parse(input, mimetype, "");
-
-            Assert.assertNotNull(theBinding.getPayload());
-            Assert.assertTrue(!theBinding.getPayload().isEmpty());
-
-            FeatureCollection<?, ?> collection = theBinding.getPayload();
-
-            FeatureIterator<?> featureIterator = collection.features();
-
-            while(featureIterator.hasNext()){
-                Feature f = featureIterator.next();
-
-                System.out.println(f.getDefaultGeometryProperty());
-            }
-
-            Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
-
-        }
-
-    }
-
-    @Override
-    protected void initializeDataHandler() {
-        dataHandler = new GTBinZippedWKT64Parser();
     }
 
 }

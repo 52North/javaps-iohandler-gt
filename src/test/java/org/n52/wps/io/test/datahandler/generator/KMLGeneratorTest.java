@@ -47,9 +47,8 @@
  */
 package org.n52.wps.io.test.datahandler.generator;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
@@ -89,9 +88,8 @@ public class KMLGeneratorTest extends AbstractTestCase {
         GTVectorDataBinding theBinding = null;
         try {
             theBinding = (GTVectorDataBinding) theParser.parse(null, input, formats.iterator().next());
-        } catch (IOException | DecodingException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (IOException | DecodingException e) {
+            fail(e.getMessage());
         }
 
         Assert.assertNotNull(theBinding);

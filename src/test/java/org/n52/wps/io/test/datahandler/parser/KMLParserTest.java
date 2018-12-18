@@ -47,71 +47,52 @@
  */
 package org.n52.wps.io.test.datahandler.parser;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+
+import javax.inject.Inject;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.datahandler.parser.KMLParser;
-import org.n52.wps.io.test.datahandler.AbstractTestCase;
+import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.javaps.gt.io.datahandler.parser.KMLParser;
+import org.n52.javaps.io.DecodingException;
+import org.n52.javaps.test.AbstractTestCase;
+import org.n52.shetland.ogc.wps.Format;
 
-public class KMLParserTest extends AbstractTestCase<KMLParser> {
+public class KMLParserTest extends AbstractTestCase {
+
+    @Inject
+    private KMLParser dataHandler;
 
     @Test
-    public void testParser(){
+    public void testParser() {
 
-        if(!isDataHandlerActive()){
-            return;
+        InputStream input = getResource("x4.kml");
+
+        Format format = dataHandler.getSupportedFormats().iterator().next();
+
+        GTVectorDataBinding theBinding = null;
+        try {
+            theBinding = (GTVectorDataBinding) dataHandler.parse(null, input, format);
+        } catch (IOException | DecodingException e) {
+            fail(e.getMessage());
         }
 
-//        String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/streams.kml";//from geoserver, fail
-//        String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/shape.kml";//can be read by grass gis, fail
-//        String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/states.kml";//geotools example kml, fail
-        String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/x4.kml";//returned by our own generator, fail
+        Assert.assertNotNull(theBinding);
+        Assert.assertNotNull(theBinding.getPayload());
 
         try {
-            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-        } catch (UnsupportedEncodingException e1) {
-            Assert.fail(e1.getMessage());
+            File f = theBinding.getPayloadAsShpFile();
+            Assert.assertTrue(f.exists());
+        } catch (Exception e) {
+            fail(e.getMessage());
         }
+        Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
-        String[] mimetypes = dataHandler.getSupportedFormats();
-
-        InputStream input = null;
-
-        for (String mimetype : mimetypes) {
-
-            try {
-                input = new FileInputStream(new File(testFilePath));
-            } catch (FileNotFoundException e) {
-                Assert.fail(e.getMessage());
-            }
-
-            GTVectorDataBinding theBinding = dataHandler.parse(input, mimetype, "");
-
-            Assert.assertNotNull(theBinding.getPayload());
-
-            try {
-                File f = theBinding.getPayloadAsShpFile();
-                Assert.assertTrue(f.exists());
-            } catch (Exception e) {
-                e.printStackTrace();
-                Assert.fail(e.getMessage());
-            }
-            Assert.assertTrue(!theBinding.getPayload().isEmpty());
-
-        }
-
-    }
-
-    @Override
-    protected void initializeDataHandler() {
-        dataHandler = new KMLParser();
     }
 
 }
