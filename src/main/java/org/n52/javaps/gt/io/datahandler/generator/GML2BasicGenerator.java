@@ -49,10 +49,12 @@ package org.n52.javaps.gt.io.datahandler.generator;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -113,10 +115,10 @@ public class GML2BasicGenerator extends AbstractPropertiesInputOutputHandlerForF
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
             writer.write(EMPTY_WFS_FEATURE_COLLECTION);
             writer.flush();
+            return;
         }
         Feature f = fc.features().next();
         FeatureType ft = f.getType();
-        // String srsName = (String)f.getDefaultGeometry().getUserData();
 
         Map<Object, Object> userData = f.getUserData();
         Object srs = userData.get("srs");
@@ -174,9 +176,10 @@ public class GML2BasicGenerator extends AbstractPropertiesInputOutputHandlerForF
             Format format) throws IOException, EncodingException {
         File tempFile = File.createTempFile("gml2", "xml");
         finalizeFiles.add(tempFile);
-        FileWriter fw = new FileWriter(tempFile);
-        write(data, fw);
-        fw.close();
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(tempFile),
+                StandardCharsets.UTF_8);
+        write(data, outputStreamWriter);
+        outputStreamWriter.close();
         InputStream is = new FileInputStream(tempFile);
         return is;
     }

@@ -53,7 +53,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
@@ -67,6 +66,7 @@ import org.n52.javaps.description.TypedProcessOutputDescription;
 import org.n52.javaps.gt.io.GTHelper;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
+import org.n52.javaps.gt.io.util.FileConstants;
 import org.n52.javaps.io.Data;
 import org.n52.javaps.io.EncodingException;
 import org.n52.javaps.io.OutputHandler;
@@ -147,15 +147,17 @@ public class GML3BasicGenerator extends AbstractPropertiesInputOutputHandlerForF
     public InputStream generate(TypedProcessOutputDescription<?> description,
             Data<?> data,
             Format format) throws IOException, EncodingException {
-        String uuid = UUID.randomUUID().toString();
-        File file = File.createTempFile("gml3" + uuid, ".xml");
+        File file = FileConstants.createTempFile(FileConstants.dot(FileConstants.SUFFIX_GML3));
         finalizeFiles.add(file);
-        FileOutputStream outputStream = new FileOutputStream(file);
-        this.writeToStream(data, outputStream);
-        outputStream.flush();
-        outputStream.close();
-        if (file.length() <= 0) {
-            return null;
+        try (FileOutputStream outputStream = new FileOutputStream(file)) {
+            this.writeToStream(data, outputStream);
+            outputStream.flush();
+            outputStream.close();
+            if (file.length() <= 0) {
+                return null;
+            }
+        } catch (IOException e) {
+            throw e;
         }
         FileInputStream inputStream = new FileInputStream(file);
 

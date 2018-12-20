@@ -69,9 +69,9 @@ public class GML2Handler extends DefaultHandler {
     public static final String NS_URI_GML = "http://www.opengis.net/gml";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GML2Handler.class);
-    
+
     private static final String SCHEMALOCATION = "schemaLocation";
-    
+
     private String schemaUrl;
 
     private String nameSpaceURI;

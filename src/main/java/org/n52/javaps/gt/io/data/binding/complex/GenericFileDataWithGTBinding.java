@@ -60,7 +60,7 @@ public class GenericFileDataWithGTBinding implements ComplexData<GenericFileData
      */
     private static final long serialVersionUID = 625383192227478620L;
 
-    protected GenericFileDataWithGT payload;
+    protected transient GenericFileDataWithGT payload;
 
     public GenericFileDataWithGTBinding(GenericFileDataWithGT fileData) {
         this.payload = fileData;

@@ -47,14 +47,26 @@
  */
 package org.n52.javaps.gt.io.data.binding.complex;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.n52.javaps.gt.io.data.GenericFileDataWithGT;
+import org.n52.javaps.gt.io.datahandler.generator.GML3BasicGenerator;
+import org.n52.javaps.gt.io.datahandler.parser.GML3BasicParser;
+import org.n52.javaps.io.DecodingException;
 import org.n52.javaps.io.complex.ComplexData;
+import org.n52.shetland.ogc.wps.Format;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GTVectorDataBinding implements ComplexData<SimpleFeatureCollection> {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(GTVectorDataBinding.class);
 
     /**
     *
@@ -79,11 +91,27 @@ public class GTVectorDataBinding implements ComplexData<SimpleFeatureCollection>
         try {
             return GenericFileDataWithGT.getShpFile(featureCollection);
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Could not transform Feature Collection into shp file. Reason " + e
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException("Could not transform Feature Collection into shp file. Reason: " + e
                     .getMessage());
         }
 
     }
 
+    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        GML3BasicGenerator generator = new GML3BasicGenerator();
+        generator.writeToStream(this, out);
+        oos.writeObject(out.toByteArray());
+    }
+
+    private void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException,
+            DecodingException {
+        GML3BasicParser parser = new GML3BasicParser();
+        InputStream stream = new ByteArrayInputStream(((String) oos.readObject()).getBytes(StandardCharsets.UTF_8));
+        // use a default configuration for the parser by requesting the first
+        // supported format and schema
+        GTVectorDataBinding data = (GTVectorDataBinding) parser.parse(null, stream, new Format("text/xml"));
+        this.featureCollection = data.getPayload();
+    }
 }

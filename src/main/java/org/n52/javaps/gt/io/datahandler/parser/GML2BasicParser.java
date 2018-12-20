@@ -134,9 +134,9 @@ public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFile
         SimpleFeatureCollection fc = new DefaultFeatureCollection(null, null);
         try {
             Object parsedData = null;
-            try {
+            try (InputStream in = new FileInputStream(file)) {
                 parser.setStrict(shouldSetParserStrict);
-                parsedData = parser.parse(new FileInputStream(file));
+                parsedData = parser.parse(in);
             } catch (SAXException e5) {
                 // assume the xsd containing the schema was not found
                 configuration = new GMLConfiguration();

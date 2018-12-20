@@ -139,7 +139,7 @@ public class GeoServerUploader implements ConfigurableClass {
             String request,
             String contentType) throws ClientProtocolException, IOException {
 
-        InputStream inputStream = new ByteArrayInputStream(request.getBytes());
+        InputStream inputStream = new ByteArrayInputStream(request.getBytes(StandardCharsets.UTF_8));
 
         return sendPutRequest(target, inputStream, contentType);
     }

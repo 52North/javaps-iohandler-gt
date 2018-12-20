@@ -37,6 +37,8 @@ public final class FileConstants {
 
     public static final String SUFFIX_ZIP = "zip";
 
+    public static final String SUFFIX_XSD = "xsd";
+
     private static Logger LOGGER = LoggerFactory.getLogger(FileConstants.class);
 
     public static String dot(String suffix) {

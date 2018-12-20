@@ -1,6 +1,0 @@
-{
-  "Geoserver_username" : "admin",
-  "Geoserver_password" : "geoserver",
-  "Geoserver_host" : "localhost",
-  "Geoserver_port" : "8080"
-}

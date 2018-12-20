@@ -17,13 +17,13 @@ public class GMLSchema extends AbstractTestCase {
 
     @Inject
     private GTHelper gtHelper;
-    
+
     @Inject
     private GeoJSONParser geoJSONParser;
-    
+
     @Test
     public void testGenerateGML3Schema() {
-        
+
         //TODO test different geometries
         GTVectorDataBinding point = null;
         try {
@@ -31,9 +31,9 @@ public class GMLSchema extends AbstractTestCase {
         } catch (IOException | DecodingException e) {
             fail(e.getMessage());
         }
-        
+
         gtHelper.createGML3SchemaForFeatureType(point.getPayload().getSchema());
-                
+
     }
-    
+
 }

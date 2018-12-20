@@ -113,7 +113,7 @@ public class GeoserverGenerator extends AbstractPropertiesInputOutputHandler imp
                 GenericFileDataWithGT fileData = new GenericFileDataWithGT(gtData.getPayload());
                 file = fileData.getBaseFile(true);
             } catch (IOException e1) {
-                e1.printStackTrace();
+                LOGGER.error(e1.getMessage());
                 throw new RuntimeException("Error generating shp file for storage in WFS. Reason: " + e1);
             }
 
@@ -189,15 +189,15 @@ public class GeoserverGenerator extends AbstractPropertiesInputOutputHandler imp
             ReferenceIdentifier srsIdentifier = null;
 
             try {
-
                 srsIdentifier = gridCoverage2D.getEnvelope2D().getCoordinateReferenceSystem().getCoordinateSystem()
                         .getIdentifiers().iterator().next();
-
             } catch (Exception e) {
                 LOGGER.info("Could not get CRS from grid.");
             }
 
-            srsString = srsIdentifier.getCodeSpace() + ":" + srsIdentifier.getCode();
+            if (srsIdentifier != null) {
+                srsString = srsIdentifier.getCodeSpace() + ":" + srsIdentifier.getCode();
+            }
 
             width = gridCoverage2D.getRenderedImage().getWidth();
             height = gridCoverage2D.getRenderedImage().getHeight();

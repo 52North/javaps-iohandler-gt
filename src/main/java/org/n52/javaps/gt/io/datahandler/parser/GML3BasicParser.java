@@ -58,6 +58,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -82,6 +83,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 /**
  * This parser handles xml files compliant to gmlpacket.xsd
@@ -134,26 +136,23 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
         Configuration configuration = null;
 
         boolean shouldSetParserStrict = true;
-        if (schematypeTuple != null) {
 
-            String schemaLocation = schematypeTuple.getLocalPart();
+        String schemaLocation = schematypeTuple.getLocalPart();
 
-            if (schemaLocationIsRelative) {
-                schemaLocation = new File(file.getParentFile(), schemaLocation).getAbsolutePath();
-            }
+        if (schemaLocationIsRelative) {
+            schemaLocation = new File(file.getParentFile(), schemaLocation).getAbsolutePath();
+        }
 
-            if (schemaLocation.equals("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd")) {
+        if (schemaLocation.equals("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd")) {
+            configuration = new GMLConfiguration();
+            shouldSetParserStrict = false;
+        } else {
+            if (schematypeTuple.getNamespaceURI() != null) {
+                SchemaRepository.registerSchemaLocation(schematypeTuple.getNamespaceURI(), schemaLocation);
+                configuration = new ApplicationSchemaConfiguration(schematypeTuple.getNamespaceURI(), schemaLocation);
+            } else {
                 configuration = new GMLConfiguration();
                 shouldSetParserStrict = false;
-            } else {
-                if (schemaLocation != null && schematypeTuple.getNamespaceURI() != null) {
-                    SchemaRepository.registerSchemaLocation(schematypeTuple.getNamespaceURI(), schemaLocation);
-                    configuration = new ApplicationSchemaConfiguration(schematypeTuple.getNamespaceURI(),
-                            schemaLocation);
-                } else {
-                    configuration = new GMLConfiguration();
-                    shouldSetParserStrict = false;
-                }
             }
         }
 
@@ -189,8 +188,8 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
 
         // parse
         SimpleFeatureCollection fc = new DefaultFeatureCollection(null, null);
-        try {
-            Object parsedData = parser.parse(new FileInputStream(file));
+        try (InputStream in = new FileInputStream(file)) {
+            Object parsedData = parser.parse(in);
             if (parsedData instanceof FeatureCollection) {
                 fc = (SimpleFeatureCollection) parsedData;
             } else if (parsedData instanceof HashMap) {
@@ -244,13 +243,13 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
 
             gtHelper.checkGeometries(fc);
 
-        } catch (Exception e) {
+        } catch (IOException | SAXException | ParserConfigurationException e) {
             LOGGER.error("Exception while handling parsed GML.", e);
             throw new RuntimeException(e);
         }
         return fc;
     }
-    
+
     @Override
     public Data<?> parse(TypedProcessInputDescription<?> description,
             InputStream input,

@@ -48,10 +48,12 @@
 package org.n52.javaps.gt.io.datahandler.parser;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,7 +98,7 @@ public class GTBinZippedWKT64Parser extends AbstractPropertiesInputOutputHandler
 
     @Inject
     private GTHelper gtHelper;
-    
+
     public GTBinZippedWKT64Parser() {
         super();
         addSupportedBinding(GTVectorDataBinding.class);
@@ -106,11 +108,11 @@ public class GTBinZippedWKT64Parser extends AbstractPropertiesInputOutputHandler
             CoordinateReferenceSystem coordinateReferenceSystem) {
 
         SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
-        
+
         CoordinateReferenceSystem crsCopy = coordinateReferenceSystem;
-        
+
         if (crsCopy == null) {
-            crsCopy = gtHelper.getDefaultCRS();    
+            crsCopy = gtHelper.getDefaultCRS();
             typeBuilder.setCRS(crsCopy);
         }
 
@@ -139,9 +141,9 @@ public class GTBinZippedWKT64Parser extends AbstractPropertiesInputOutputHandler
             InputStream stream,
             Format format) throws IOException, DecodingException {
         try {
-            
+
             File tempFile = FileConstants.writeTempFile(stream);
-            
+
             List<File> wktFiles = IOUtils.unzip(tempFile, "wkt");
             finalizeFiles.addAll(wktFiles);
 
@@ -158,7 +160,7 @@ public class GTBinZippedWKT64Parser extends AbstractPropertiesInputOutputHandler
             // method
             for (int i = 0; i < wktFiles.size(); i++) {
                 File wktFile = wktFiles.get(i);
-                Reader fileReader = new FileReader(wktFile);
+                Reader fileReader = new InputStreamReader(new FileInputStream(wktFile), StandardCharsets.UTF_8);
 
                 WKTReader2 wktReader = new WKTReader2();
                 Geometry geometry = wktReader.read(fileReader);

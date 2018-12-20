@@ -53,7 +53,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,6 +83,7 @@ import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.datahandler.generator.GeotiffGenerator;
 import org.n52.javaps.gt.io.datahandler.parser.GML2BasicParser;
 import org.n52.javaps.gt.io.datahandler.parser.GML3BasicParser;
+import org.n52.javaps.gt.io.util.FileConstants;
 import org.n52.javaps.io.DecodingException;
 import org.n52.javaps.io.EncodingException;
 import org.n52.javaps.io.GenericFileDataConstants;
@@ -328,7 +328,7 @@ public class GenericFileDataWithGT {
     }
 
     private static boolean isSupportedShapefileType(PropertyType type) {
-        String supported[] = { "String", "Integer", "Double", "Boolean", "Date", "LineString", "MultiLineString",
+        String[] supported = { "String", "Integer", "Double", "Boolean", "Date", "LineString", "MultiLineString",
                 "Polygon", "MultiPolygon", "Point", "MultiPoint", "Long" };
         for (String iter : supported) {
             if (type.getBinding().getSimpleName().equalsIgnoreCase(iter)) {
@@ -376,16 +376,8 @@ public class GenericFileDataWithGT {
             currentExtension = currentExtension.substring(beginIndex);
 
             String fileName = baseFileName + "." + currentExtension;
-            File currentFile = new File(writeDirectory, fileName);
-            if (!writeDirectory.exists()) {
-                writeDirectory.mkdir();
-            }
 
-            if (!currentFile.createNewFile()) {
-                String message = COULD_NOT_CREATE_FILE + currentFile.getAbsolutePath();
-                LOGGER.error(message);
-                throw new RuntimeException(message);
-            }
+            File currentFile = createFileInDirectory(writeDirectory, fileName);
 
             FileOutputStream fos = new FileOutputStream(currentFile);
 
@@ -401,6 +393,26 @@ public class GenericFileDataWithGT {
         return returnFile;
     }
 
+    private File createFileInDirectory(File writeDirectory,
+            String fileName) throws IOException {
+
+        File currentFile = new File(writeDirectory, fileName);
+
+        if (!writeDirectory.exists()) {
+            if (!writeDirectory.mkdir()) {
+                throw new IOException(COULD_NOT_CREATE_DIRECTORY + writeDirectory);
+            }
+        }
+
+        if (!currentFile.createNewFile()) {
+            String message = COULD_NOT_CREATE_FILE + currentFile.getAbsolutePath();
+            LOGGER.error(message);
+            throw new RuntimeException(message);
+        }
+
+        return currentFile;
+    }
+
     private String justWriteData(InputStream is,
             String extension,
             File writeDirectory) throws IOException {
@@ -409,16 +421,7 @@ public class GenericFileDataWithGT {
         String baseFileName = UUID.randomUUID().toString();
 
         fileName = baseFileName + "." + extension;
-        File currentFile = new File(writeDirectory, fileName);
-        if (!writeDirectory.exists()) {
-            writeDirectory.mkdir();
-        }
-
-        if (!currentFile.createNewFile()) {
-            String message = COULD_NOT_CREATE_FILE + currentFile.getAbsolutePath();
-            LOGGER.error(message);
-            throw new RuntimeException(message);
-        }
+        File currentFile = createFileInDirectory(writeDirectory, fileName);
 
         // alter FileName for return
         fileName = currentFile.getAbsolutePath();
@@ -442,17 +445,21 @@ public class GenericFileDataWithGT {
 
             if (new File(dirName).mkdir()) {
                 tempDir = new File(dirName);
+            } else {
+              throw new IOException(COULD_NOT_CREATE_DIRECTORY + dirName);
             }
 
-            LOGGER.info("Writing temp data to: " + tempDir);
+            LOGGER.trace("Writing temp data to: " + tempDir);
             String fileName = writeData(tempDir);
-            LOGGER.info("Temp file is: " + fileName);
+            LOGGER.trace("Temp file is: " + fileName);
             File shpFile = new File(fileName);
 
             try {
                 DataStore store = new ShapefileDataStore(shpFile.toURI().toURL());
                 SimpleFeatureCollection features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
-                tempDir.delete();
+                if (!tempDir.delete()) {
+                    LOGGER.trace("Could not delete temporary directory: " + tempDir.getAbsolutePath());
+                }
                 return new GTVectorDataBinding(features);
             } catch (MalformedURLException e) {
                 String message = "Something went wrong while creating data store.";
@@ -485,18 +492,10 @@ public class GenericFileDataWithGT {
         String extension = fileExtension;
         if (primaryFile == null && dataStream != null) {
             try {
-
                 if (fileExtension.equals("shp")) {
                     extension = ZIP;
                 }
-                primaryFile = File.createTempFile(UUID.randomUUID().toString(), "." + extension);
-                OutputStream out = new FileOutputStream(primaryFile);
-                byte buf[] = new byte[1024];
-                int len;
-                while ((len = dataStream.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                out.close();
+                primaryFile = FileConstants.writeTempFile(dataStream, FileConstants.dot(extension));
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
                 throw new RuntimeException("Something went wrong while writing the input stream to the file system", e);
@@ -507,7 +506,9 @@ public class GenericFileDataWithGT {
             try {
                 File tempFile1 = File.createTempFile(UUID.randomUUID().toString(), "");
                 File dir = new File(tempFile1.getParentFile() + "/" + UUID.randomUUID().toString());
-                dir.mkdir();
+                if (!dir.mkdir()) {
+                    throw new Exception(COULD_NOT_CREATE_DIRECTORY + dir);
+                }
                 FileInputStream fis = new FileInputStream(primaryFile);
                 ZipInputStream zis = new ZipInputStream(fis);
                 ZipEntry entry;
@@ -515,13 +516,18 @@ public class GenericFileDataWithGT {
                     LOGGER.debug("Extracting: " + entry);
                     // write the files to the disk
                     FileOutputStream fos = new FileOutputStream(dir.getAbsoluteFile() + "/" + entry.getName());
-
                     IOUtils.copy(zis, fos);
-
                 }
                 zis.close();
 
                 File[] files = dir.listFiles();
+
+                if (files == null) {
+                    String message = "No files in directory: " + dir.getAbsolutePath();
+                    LOGGER.error(message);
+                    throw new Exception(message);
+                }
+
                 for (File file : files) {
                     if (file.getName().contains(SHP) || file.getName().contains(".SHP")) {
                         primaryFile = file;

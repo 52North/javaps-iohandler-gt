@@ -113,12 +113,18 @@ public class GML32BasicParser extends AbstractPropertiesInputOutputHandlerForFil
     public Data<?> parse(TypedProcessInputDescription<?> description,
             InputStream input,
             Format format) throws IOException, DecodingException {
+
+        File tempFile;
         try {
-            
-            File tempFile = FileConstants.writeTempFile(input);
+            tempFile = FileConstants.writeTempFile(input);
+        } catch (Exception e1) {
+            throw new IOException(e1.getMessage());
+        }
+
+        try (InputStream in = new FileInputStream(tempFile)) {
 
             QName schematypeTuple = determineFeatureTypeSchema(tempFile);
-            return parse(new FileInputStream(tempFile), schematypeTuple);
+            return parse(in, schematypeTuple);
         } catch (Exception e) {
             throw new IllegalArgumentException("Error while creating tempFile", e);
         }
@@ -196,7 +202,7 @@ public class GML32BasicParser extends AbstractPropertiesInputOutputHandlerForFil
         Configuration resolvedConfiguration = null;
         if (schematypeTuple != null) {
             String schemaLocation = schematypeTuple.getLocalPart();
-            if (schemaLocation.startsWith("http://schemas.opengis.net/gml/3.2")) {
+            if (schemaLocation != null && schemaLocation.startsWith("http://schemas.opengis.net/gml/3.2")) {
                 resolvedConfiguration = new GMLConfiguration();
             } else {
                 if (schemaLocation != null && schematypeTuple.getNamespaceURI() != null) {
@@ -215,12 +221,12 @@ public class GML32BasicParser extends AbstractPropertiesInputOutputHandlerForFil
     }
 
     private QName determineFeatureTypeSchema(File file) {
-        try {
+        try (InputStream in = new FileInputStream(file)) {
             GML2Handler handler = new GML2Handler();
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
 
-            factory.newSAXParser().parse(new FileInputStream(file), handler);
+            factory.newSAXParser().parse(in, handler);
 
             String schemaUrl = handler.getSchemaUrl();
 

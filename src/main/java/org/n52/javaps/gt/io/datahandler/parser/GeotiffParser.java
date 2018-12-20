@@ -48,8 +48,6 @@
 package org.n52.javaps.gt.io.datahandler.parser;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -104,19 +102,8 @@ public class GeotiffParser extends AbstractPropertiesInputOutputHandlerForFiles 
         File tempFile;
 
         try {
-            tempFile = FileConstants.createTempFile(FileConstants.SUFFIX_TIF);
-            finalizeFiles.add(tempFile);
-            FileOutputStream outputStream = new FileOutputStream(tempFile);
-            byte buf[] = new byte[4096];
-            int len;
-            while ((len = input.read(buf)) > 0) {
-                outputStream.write(buf, 0, len);
-            }
-
-            outputStream.flush();
-            outputStream.close();
-            input.close();
-        } catch (FileNotFoundException e) {
+            tempFile = FileConstants.writeTempFile(input);
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }

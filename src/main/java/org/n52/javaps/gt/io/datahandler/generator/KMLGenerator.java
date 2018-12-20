@@ -107,14 +107,12 @@ public class KMLGenerator extends AbstractPropertiesInputOutputHandlerForFiles i
             Format format) throws IOException, EncodingException {
         File tempFile = null;
         InputStream stream = null;
-        try {
-            tempFile = File.createTempFile("kml", "xml");
+        tempFile = File.createTempFile("kml", "xml");
+        try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
             this.finalizeFiles.add(tempFile);
-            FileOutputStream outputStream = new FileOutputStream(tempFile);
             this.writeToStream(data, outputStream);
             outputStream.flush();
             outputStream.close();
-
             stream = new FileInputStream(tempFile);
         } catch (IOException e) {
             LOGGER.error(e.getMessage());

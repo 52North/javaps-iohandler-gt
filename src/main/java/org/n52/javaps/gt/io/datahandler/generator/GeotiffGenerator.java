@@ -102,7 +102,7 @@ public class GeotiffGenerator extends AbstractPropertiesInputOutputHandlerForFil
         int width = ((GridCoverage2D) coverage).getRenderedImage().getWidth();
         int tileWidth = 1024;
         if (width < 2048) {
-            tileWidth = new Double(Math.sqrt(width)).intValue();
+            tileWidth = Double.valueOf(Math.sqrt(width)).intValue();
         }
         wp.setTiling(tileWidth, tileWidth);
         ParameterValueGroup paramWrite = format.getWriteParameters();

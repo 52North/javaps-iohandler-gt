@@ -81,7 +81,7 @@ public class GTBinZippedSHPParser extends AbstractPropertiesInputOutputHandlerFo
             Format format) throws IOException, DecodingException {
         try {
             File tempFile = FileConstants.writeTempFile(stream, FileConstants.dot(FileConstants.SUFFIX_ZIP));
-            
+
             File shp = IOUtils.unzip(tempFile, "shp").get(0);
             DataStore store = new ShapefileDataStore(shp.toURI().toURL());
             SimpleFeatureCollection features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
