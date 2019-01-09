@@ -12,7 +12,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>javaPS Input-/Outputhandler with GeoTools</name>
 
-	<inceptionYear>20165</inceptionYear>
+	<inceptionYear>2016</inceptionYear>
 
 	<developers>
 		<developer>
@@ -26,19 +26,6 @@
 	</developers>
 
 	<packaging>jar</packaging>
-
-	<!-- <mailingLists> -->
-	<!-- <mailingList> -->
-	<!-- <name>Sensor Web Community Mailing List</name> -->
-	<!-- <subscribe>http://list.52north.org/mailman/listinfo/swe</subscribe> -->
-	<!-- <unsubscribe>http://list.52north.org/mailman/listinfo/swe</unsubscribe> -->
-	<!-- <post>swe@52north.org</post> -->
-	<!-- <archive>http://list.52north.org/pipermail/swe</archive> -->
-	<!-- <otherArchives> -->
-	<!-- <otherArchive>http://sensorweb.forum.52north.org</otherArchive> -->
-	<!-- </otherArchives> -->
-	<!-- </mailingList> -->
-	<!-- </mailingLists> -->
 
 	<scm>
 		<url>https://github.com/52North/wps-backends</url>
@@ -71,7 +58,7 @@
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<version.java>1.8</version.java>
-		<geotools.version>13.5</geotools.version>
+		<version.geotools>13.5</version.geotools>
 		<version.slf4j>1.7.25</version.slf4j>
 		<version.log4j>2.11.1</version.log4j>
 	</properties>
@@ -80,7 +67,7 @@
 		<dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>engine</artifactId>
-			<version>1.1.2-SNAPSHOT</version>
+			<version>${parent.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>xml-apis</artifactId>
@@ -91,7 +78,7 @@
 		<dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>iceland-stream</artifactId>
-			<version>1.1.2-SNAPSHOT</version>
+			<version>${parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.n52.geoprocessing</groupId>
@@ -113,16 +100,6 @@
 			<version>1.13</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-all</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.2</version>
@@ -136,7 +113,7 @@
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-main</artifactId>
-			<version>${geotools.version}</version>
+			<version>${version.geotools}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jts</artifactId>
@@ -147,33 +124,33 @@
 		<dependency>
 			<groupId>org.geotools.xsd</groupId>
 			<artifactId>gt-xsd-gml3</artifactId>
-			<version>${geotools.version}</version>
+			<version>${version.geotools}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-referencing</artifactId>
-			<version>${geotools.version}</version>
+			<version>${version.geotools}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-geojson</artifactId>
-			<version>${geotools.version}</version>
+			<version>${version.geotools}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools.xsd</groupId>
 			<artifactId>gt-xsd-core</artifactId>
-			<version>${geotools.version}</version>
+			<version>${version.geotools}</version>
 		</dependency>
 		<dependency>
 			<artifactId>gt-epsg-hsql</artifactId>
 			<groupId>org.geotools</groupId>
-			<version>${geotools.version}</version>
+			<version>${version.geotools}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-geotiff</artifactId>
-			<version>${geotools.version}</version>
+			<version>${version.geotools}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.vividsolutions</groupId>
@@ -184,27 +161,27 @@
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-metadata</artifactId>
-			<version>${geotools.version}</version>
+			<version>${version.geotools}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-shapefile</artifactId>
-			<version>${geotools.version}</version>
+			<version>${version.geotools}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-opengis</artifactId>
-			<version>${geotools.version}</version>
+			<version>${version.geotools}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools.xsd</groupId>
 			<artifactId>gt-xsd-gml2</artifactId>
-			<version>${geotools.version}</version>
+			<version>${version.geotools}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-api</artifactId>
-			<version>${geotools.version}</version>
+			<version>${version.geotools}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jts</artifactId>
@@ -215,7 +192,33 @@
 		<dependency>
 			<groupId>org.geotools.xsd</groupId>
 			<artifactId>gt-xsd-kml</artifactId>
-			<version>${geotools.version}</version>
+			<version>${version.geotools}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-coverage</artifactId>
+			<version>${version.geotools}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jts</artifactId>
+					<groupId>com.vividsolutions</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>java3d</groupId>
+			<artifactId>vecmath</artifactId>
+			<version>1.3.2</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.media</groupId>
+			<artifactId>jai_core</artifactId>
+			<version>1.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.n52.arctic-sea</groupId>
@@ -235,16 +238,16 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-		<artifactId>faroe-annotations</artifactId>
-		<groupId>org.n52.arctic-sea</groupId>
+			<artifactId>faroe-annotations</artifactId>
+			<groupId>org.n52.arctic-sea</groupId>
 		</dependency>
 		<dependency>
-		<artifactId>faroe-utils</artifactId>
-		<groupId>org.n52.arctic-sea</groupId>
+			<artifactId>faroe-utils</artifactId>
+			<groupId>org.n52.arctic-sea</groupId>
 		</dependency>
 		<dependency>
-		<groupId>commons-codec</groupId>
-		<artifactId>commons-codec</artifactId>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
 		</dependency>
 		<dependency>
 			<artifactId>stax-api</artifactId>
@@ -258,6 +261,16 @@
 		<dependency>
 			<artifactId>javax.inject</artifactId>
 			<groupId>javax.inject</groupId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>xml-apis</groupId>
@@ -279,32 +292,6 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>java3d</groupId>
-			<artifactId>vecmath</artifactId>
-			<version>1.3.2</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-coverage</artifactId>
-			<version>13.5</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>jts</artifactId>
-					<groupId>com.vividsolutions</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.media</groupId>
-			<artifactId>jai_core</artifactId>
-			<version>1.1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
