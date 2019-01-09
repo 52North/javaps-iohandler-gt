@@ -25,7 +25,6 @@
                            http://www.springframework.org/schema/util
                            http://www.springframework.org/schema/util/spring-util-4.1.xsd">
 
-<!--     <bean id="abstractpropertiesinputoutputhandlerforfiles" class="org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles" /> -->
     <bean id="gthelper" class="org.n52.javaps.gt.io.GTHelper" />
 
     <bean id="genericfiledatawithgtparser" class="org.n52.javaps.gt.io.datahandler.parser.GenericFileDataWithGTParser" />
@@ -52,9 +51,5 @@
     <bean id="gtbinzippedshpgenerator" class="org.n52.javaps.gt.io.datahandler.generator.GTBinZippedSHPGenerator" />
     <bean id="kmlgenerator" class="org.n52.javaps.gt.io.datahandler.generator.KMLGenerator" />
     <bean id="gtbindirectoryshpgenerator" class="org.n52.javaps.gt.io.datahandler.generator.GTBinDirectorySHPGenerator" />
-<!--     <bean id="abstractgeoserverwxsgenerator" class="org.n52.javaps.gt.io.datahandler.generator.AbstractGeoserverWXSGenerator" /> -->
-<!--     <bean id="geoserverwmsgenerator" class="org.n52.javaps.gt.io.datahandler.generator.GeoserverWMSGenerator" /> -->
-<!--     <bean id="geoserverwfsgenerator" class="org.n52.javaps.gt.io.datahandler.generator.GeoserverWFSGenerator" /> -->
-<!--     <bean id="geoserverwcsgenerator" class="org.n52.javaps.gt.io.datahandler.generator.GeoserverWCSGenerator" /> -->
 
 </beans>
