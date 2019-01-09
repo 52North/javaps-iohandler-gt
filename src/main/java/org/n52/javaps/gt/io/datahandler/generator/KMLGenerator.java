@@ -113,11 +113,11 @@ public class KMLGenerator extends AbstractPropertiesInputOutputHandlerForFiles i
             this.writeToStream(data, outputStream);
             outputStream.flush();
             outputStream.close();
-            stream = new FileInputStream(tempFile);
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
             throw new IOException("Unable to generate KML");
         }
+        stream = new FileInputStream(tempFile);
 
         return stream;
     }

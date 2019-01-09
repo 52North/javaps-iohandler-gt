@@ -57,6 +57,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -142,7 +143,11 @@ public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFile
                 configuration = new GMLConfiguration();
                 parser = new org.geotools.xml.Parser(configuration);
                 parser.setStrict(false);
-                parsedData = parser.parse(new FileInputStream(file));
+                try {
+                    parsedData = parser.parse(new FileInputStream(file));
+                } catch (SAXException e) {
+                    LOGGER.debug("Could not parse file: " + file.getAbsolutePath());
+                }
             }
             if (parsedData instanceof SimpleFeatureCollection) {
                 fc = (SimpleFeatureCollection) parsedData;
@@ -174,7 +179,7 @@ public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFile
             gtHelper.checkGeometries(fc);
 
             return fc;
-        } catch (Exception e) {
+        } catch (IOException | ParserConfigurationException e) {
             LOGGER.error("Exception while trying to parse GML2 FeatureCollection.", e);
             throw new RuntimeException(e);
         }
