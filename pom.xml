@@ -27,20 +27,20 @@
 	<packaging>jar</packaging>
 
 	<scm>
-		<url>https://github.com/52North/wps-backends</url>
-		<connection>scm:git:https://github.com/52North/wps-backends.git</connection>
-		<developerConnection>scm:git:https://github.com/52North/wps-backends.git</developerConnection>
+		<url>https://github.com/52North/javaps-iohandler-gt</url>
+		<connection>scm:git:https://github.com/52North/javaps-iohandler-gt.git</connection>
+		<developerConnection>scm:git:https://github.com/52North/javaps-iohandler-gt.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
 		<system>GitHub issues</system>
-		<url>https://github.com/52North/wps-backends/issues?state=open</url>
+		<url>https://github.com/52North/javaps-iohandler-gt/issues?state=open</url>
 	</issueManagement>
 
 	<ciManagement>
 		<system>Travis CI</system>
-		<url>https://travis-ci.org/52North/wps-backends</url>
+		<url>https://travis-ci.org/52North/javaps-iohandler-gt</url>
 	</ciManagement>
 
 	<licenses>
