@@ -64,6 +64,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.WKTReader2;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.gt.io.GTHelper;
@@ -82,8 +83,6 @@ import org.opengis.feature.type.Name;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @author Bastian Schaeffer; Matthias Mueller, TU Dresden
@@ -104,7 +103,7 @@ public class GTBinZippedWKT64Parser extends AbstractPropertiesInputOutputHandler
         addSupportedBinding(GTVectorDataBinding.class);
     }
 
-    private SimpleFeatureCollection createFeatureCollection(List<com.vividsolutions.jts.geom.Geometry> geometries,
+    private SimpleFeatureCollection createFeatureCollection(List<Geometry> geometries,
             CoordinateReferenceSystem coordinateReferenceSystem) {
 
         SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();

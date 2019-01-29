@@ -9,7 +9,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.n52.geoprocessing</groupId>
 	<artifactId>javaps-iohandler-gt</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>javaPS Input-/Outputhandler with GeoTools</name>
 
 	<inceptionYear>2016</inceptionYear>
@@ -58,7 +57,7 @@
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<version.java>1.8</version.java>
-		<version.geotools>13.5</version.geotools>
+		<version.geotools>20.2</version.geotools>
 		<version.slf4j>1.7.25</version.slf4j>
 		<version.log4j>2.11.1</version.log4j>
 	</properties>
@@ -67,7 +66,7 @@
 		<dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>engine</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>xml-apis</artifactId>
@@ -78,12 +77,12 @@
 		<dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>iceland-stream</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.n52.geoprocessing</groupId>
 			<artifactId>javaps-iohandler</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -91,18 +90,18 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.locationtech.jts</groupId>
+			<artifactId>jts-core</artifactId>
+			<version>1.16.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.vividsolutions</groupId>
-			<artifactId>jts</artifactId>
-			<version>1.13</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.2</version>
+			<version>2.6</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.efficient-java-matrix-library</groupId>
@@ -140,6 +139,12 @@
 			<groupId>org.geotools.xsd</groupId>
 			<artifactId>gt-xsd-core</artifactId>
 			<version>${version.geotools}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<artifactId>gt-epsg-hsql</artifactId>
@@ -200,8 +205,8 @@
 			<version>${version.geotools}</version>
 			<exclusions>
 				<exclusion>
-					<artifactId>jts</artifactId>
-					<groupId>com.vividsolutions</groupId>
+					<artifactId>jts-core</artifactId>
+					<groupId>org.locationtech.jts</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -257,6 +262,7 @@
 		<dependency>
 			<artifactId>httpcore</artifactId>
 			<groupId>org.apache.httpcomponents</groupId>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<artifactId>javax.inject</artifactId>
@@ -337,6 +343,23 @@
 						<nonFilteredFileExtension>zip</nonFilteredFileExtension>
 					</nonFilteredFileExtensions>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/config/assemble.xml</descriptor>
+							</descriptors>
+						</configuration>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<phase>install</phase>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

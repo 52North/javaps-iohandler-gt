@@ -55,6 +55,7 @@ import java.io.InputStream;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessOutputDescription;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
@@ -66,7 +67,6 @@ import org.n52.javaps.io.OutputHandler;
 import org.n52.javaps.io.data.binding.complex.JTSGeometryBinding;
 import org.n52.shetland.ogc.wps.Format;
 
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * This class generates a GeoJSON String representation out of a JTS Geometry.

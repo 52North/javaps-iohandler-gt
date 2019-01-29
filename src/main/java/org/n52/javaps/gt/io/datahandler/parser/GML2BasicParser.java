@@ -151,7 +151,7 @@ public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFile
             }
             if (parsedData instanceof SimpleFeatureCollection) {
                 fc = (SimpleFeatureCollection) parsedData;
-            } else {
+            } else if (parsedData != null) {
                 List<?> possibleSimpleFeatureList = (ArrayList<?>) ((HashMap<?, ?>) parsedData).get("featureMember");
 
                 if (possibleSimpleFeatureList != null) {

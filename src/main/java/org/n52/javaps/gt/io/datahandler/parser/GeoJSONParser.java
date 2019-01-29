@@ -59,6 +59,8 @@ import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
@@ -71,9 +73,6 @@ import org.n52.shetland.ogc.wps.Format;
 import org.opengis.feature.simple.SimpleFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
 
 /**
  *

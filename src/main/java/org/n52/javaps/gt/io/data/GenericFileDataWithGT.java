@@ -78,6 +78,8 @@ import org.geotools.feature.type.GeometryDescriptorImpl;
 import org.geotools.feature.type.GeometryTypeImpl;
 import org.geotools.filter.identity.GmlObjectIdImpl;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.n52.javaps.gt.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.datahandler.generator.GeotiffGenerator;
@@ -100,9 +102,6 @@ import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.MultiPolygon;
 
 /**
  *
