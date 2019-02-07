@@ -310,7 +310,7 @@
 			<artifactId>javaps-unit-test-environment</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1</version>
 		</dependency>
 	</dependencies>
 
