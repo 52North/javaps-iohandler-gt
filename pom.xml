@@ -28,8 +28,8 @@
 
 	<scm>
 		<url>https://github.com/52North/javaps-iohandler-gt</url>
-		<connection>scm:git:https://github.com/52North/javaps-iohandler-gt.git</connection>
-		<developerConnection>scm:git:https://github.com/52North/javaps-iohandler-gt.git</developerConnection>
+		<connection>scm:git:git://github.com/52North/javaps-iohandler-gt.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/52North/javaps-iohandler-gt.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
