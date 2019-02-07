@@ -40,6 +40,7 @@
                 <include>org.geotools:gt-data</include>
                 <include>org.geotools:gt-geotiff</include>
                 <include>org.geotools:gt-coverage</include>
+                <include>org.geotools:gt-geojson</include>
 <!--                 <include>org.geotools:gt-graph</include> -->
                 <include>org.geotools:gt-metadata</include>
                 <include>org.geotools.xsd:gt-xsd-core</include>
@@ -48,6 +49,7 @@
                 <include>org.geotools.xsd:gt-xsd-kml</include>
 
                 <include>com.googlecode.efficient-java-matrix-library:core</include>
+                <include>com.googlecode.json-simple:json-simple</include>
 
                 <include>commons-io:commons-io</include>
                 <include>commons-collections:commons-collections</include>
