@@ -1,0 +1,136 @@
+Copyright (C) 2015 52°North Initiative for Geospatial Open Source
+Software GmbH
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+This project includes:
+
+  52°North Faroe Annotations under The Apache Software License, Version 2.0
+  52°North Faroe Utilities under The Apache Software License, Version 2.0
+  52°North Iceland Streaming Interfaces under The Apache Software License, Version 2.0
+  52°North Jan Mayen under The Apache Software License, Version 2.0
+  52°North javaPS Processing API Implementation under The Apache Software License, Version 2.0
+  52°North Shetland under The Apache Software License, Version 2.0
+  52°North Svalbard Core under The Apache Software License, Version 2.0
+  Animal Sniffer Annotations under MIT license
+  Apache Commons Codec under Apache License, Version 2.0
+  Apache Commons Collections under Apache License, Version 2.0
+  Apache Commons Configuration under Apache License, Version 2.0
+  Apache Commons IO under Apache License, Version 2.0
+  Apache Commons Lang under Apache License, Version 2.0
+  Apache Commons Logging under The Apache Software License, Version 2.0
+  Apache HttpClient under Apache License, Version 2.0
+  Apache HttpCore under Apache License, Version 2.0
+  API interfaces under Lesser General Public License (LGPL)
+  Checker Qual under The MIT License
+  Commons JXPath under The Apache Software License, Version 2.0
+  Commons Lang under The Apache Software License, Version 2.0
+  Commons Pool under The Apache Software License, Version 2.0
+  DataStore Support under Lesser General Public License (LGPL)
+  EJML under The Apache Software License, Version 2.0
+  EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
+  error-prone annotations under Apache 2.0
+  FindBugs-jsr305 under The Apache Software License, Version 2.0
+  GeoJSON Support under Lesser General Public License (LGPL)
+  geolatte-geom under LGPL 3.0
+  GeoTIFF grid coverage exchange module under Lesser General Public License (LGPL)
+  GML2 XML Support under Lesser General Public License (LGPL)
+  GML3 XML Support under Lesser General Public License (LGPL)
+  Grid Coverage module under Lesser General Public License (LGPL)
+  Guava InternalFutureFailureAccess and InternalFutures under The Apache Software License, Version 2.0
+  Guava ListenableFuture only under The Apache Software License, Version 2.0
+  Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
+  HyperSQL Database under HSQLDB License, a BSD open source license
+  Image I/O-Extensions - Custom Streams under Lesser General Public License (LGPL)
+  Image I/O-Extensions - GeoCore under Lesser General Public License (LGPL)
+  Image I/O-Extensions - utilities classes and methods under Lesser General Public License (LGPL)
+  Improved TIFF Plugin under Lesser General Public License (LGPL)
+  J2ObjC Annotations under The Apache Software License, Version 2.0
+  Jackson-annotations under The Apache Software License, Version 2.0
+  Jackson-core under The Apache Software License, Version 2.0
+  jackson-databind under The Apache Software License, Version 2.0
+  jai_codec under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
+  jai_core under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
+  jai_imageio under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
+  Java implementation of GeographicLib under The MIT License(MIT)
+  javaPS Input-/Outputhandler with GeoTools under The Apache Software License, Version 2.0
+  javaPS input/output handler under The Apache Software License, Version 2.0
+  javax.inject under The Apache Software License, Version 2.0
+  JCL 1.2 implemented over SLF4J under MIT License
+  JDOM under Similar to Apache License but with the acknowledgment clause removed
+  jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
+  Joda-Time under Apache 2
+  JSON.simple under The Apache Software License, Version 2.0
+  jt-affine under Lesser General Public License (LGPL)
+  jt-algebra under Lesser General Public License (LGPL)
+  jt-bandcombine under Lesser General Public License (LGPL)
+  jt-bandmerge under Lesser General Public License (LGPL)
+  jt-bandselect under Lesser General Public License (LGPL)
+  jt-binarize under Lesser General Public License (LGPL)
+  jt-border under Lesser General Public License (LGPL)
+  jt-buffer under Lesser General Public License (LGPL)
+  jt-classifier under Lesser General Public License (LGPL)
+  jt-colorconvert under Lesser General Public License (LGPL)
+  jt-colorindexer under Lesser General Public License (LGPL)
+  jt-crop under Lesser General Public License (LGPL)
+  jt-errordiffusion under Lesser General Public License (LGPL)
+  jt-format under Lesser General Public License (LGPL)
+  jt-imagefunction under Lesser General Public License (LGPL)
+  jt-iterators under Lesser General Public License (LGPL)
+  jt-lookup under Lesser General Public License (LGPL)
+  jt-mosaic under Lesser General Public License (LGPL)
+  jt-nullop under Lesser General Public License (LGPL)
+  jt-orderdither under Lesser General Public License (LGPL)
+  jt-piecewise under Lesser General Public License (LGPL)
+  jt-rescale under Lesser General Public License (LGPL)
+  jt-rlookup under Lesser General Public License (LGPL)
+  jt-scale under Lesser General Public License (LGPL)
+  jt-scale2 under Lesser General Public License (LGPL)
+  jt-shadedrelief under Lesser General Public License (LGPL)
+  jt-stats under Lesser General Public License (LGPL)
+  jt-translate under Lesser General Public License (LGPL)
+  jt-utilities under Lesser General Public License (LGPL)
+  jt-vectorbin under Lesser General Public License (LGPL)
+  jt-warp under Lesser General Public License (LGPL)
+  jt-zonal under Lesser General Public License (LGPL)
+  KML XML Support under Lesser General Public License (LGPL)
+  Main module under Lesser General Public License (LGPL)
+  Metadata under Lesser General Public License (LGPL)
+  Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
+  org.eclipse.emf.common under The Eclipse Public License Version 1.0
+  org.eclipse.emf.ecore under The Eclipse Public License Version 1.0
+  org.eclipse.emf.ecore.xmi under The Eclipse Public License Version 1.0
+  org.eclipse.xsd under The Eclipse Public License Version 1.0
+  org.locationtech.jts:jts-core under Eclipse Publish License, Version 1.0 or Eclipse Distribution License - v 1.0
+  PicoContainer Core under BSD License
+  Referencing services under Lesser General Public License (LGPL)
+  Shapefile module under Lesser General Public License (LGPL)
+  SI Quantities under BSD
+  SI Units for Java SE 8 under BSD
+  SLF4J API Module under MIT License
+  Spring AOP under Apache License, Version 2.0
+  Spring Beans under Apache License, Version 2.0
+  Spring Context under Apache License, Version 2.0
+  Spring Expression Language (SpEL) under Apache License, Version 2.0
+  Spring Web MVC under Apache License, Version 2.0
+  StAX API under The Apache Software License, Version 2.0
+  Support and utility classes under Simplified BSD
+  Units of Measurement API under BSD
+  Units of Measurement Common Library under BSD
+  Units of Measurement Common Unit Systems for Java 8 under BSD
+  Units of Measurement Implementation for Java SE under BSD
+  vecmath under Sun Binary Code License Agreement
+  XML Parsing under Lesser General Public License (LGPL)
+  XmlBeans under The Apache Software License, Version 2.0
+  ZonalStats operator under Simplified BSD
+
