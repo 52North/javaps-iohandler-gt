@@ -45,51 +45,75 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.javaps.gt.io.datahandler.parser;
+package org.n52.wps.io.test.datahandler;
 
-import java.io.File;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
-import org.geotools.data.DataStore;
-import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.n52.javaps.annotation.Properties;
-import org.n52.javaps.description.TypedProcessInputDescription;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ErrorCollector;
+import org.n52.javaps.description.TypedComplexInputDescription;
+import org.n52.javaps.description.impl.TypedProcessDescriptionFactory;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.javaps.gt.io.datahandler.AbstractPropertiesInputOutputHandlerForFiles;
-import org.n52.javaps.gt.io.util.FileConstants;
+import org.n52.javaps.gt.io.datahandler.parser.GeoJSONParser;
 import org.n52.javaps.io.Data;
 import org.n52.javaps.io.DecodingException;
-import org.n52.javaps.io.InputHandler;
-import org.n52.javaps.utils.IOUtils;
 import org.n52.shetland.ogc.wps.Format;
 
-@Properties(
-        defaultPropertyFileName = "gtbinzippedshphandler.default.json",
-        propertyFileName = "gtbinzippedshpparser.json")
-public class GTBinZippedSHPParser extends AbstractPropertiesInputOutputHandlerForFiles implements InputHandler {
+public class ComplexInputHandlerTest {
 
-    public GTBinZippedSHPParser() {
-        super();
-        addSupportedBinding(GTVectorDataBinding.class);
+    @Rule
+    public ErrorCollector errors = new ErrorCollector();
+
+    private GeoJSONParser handler;
+
+    private TypedProcessDescriptionFactory descriptionFactory;
+
+    @Before
+    public void setup() {
+        this.handler = new GeoJSONParser();
+        this.descriptionFactory = new TypedProcessDescriptionFactory();
     }
 
-    @Override
-    public Data<?> parse(TypedProcessInputDescription<?> description,
-            InputStream stream,
-            Format format) throws IOException, DecodingException {
-        try {
-            File tempFile = FileConstants.writeTempFile(stream, FileConstants.dot(FileConstants.SUFFIX_ZIP));
+    @Test
+    public void testXmlDecodingEmptyFormat() throws IOException, DecodingException {
 
-            File shp = IOUtils.unzip(tempFile, "shp").get(0);
-            DataStore store = new ShapefileDataStore(shp.toURI().toURL());
-            SimpleFeatureCollection features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
+        String value = "{\"type\":\"FeatureCollection\",\"features\":"
+                + "[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":"
+                + "[[[-70.826111,-33.445193],"
+                + "[-70.826111,-33.293804],"
+                + "[-70.716248,-33.293804],"
+                + "[-70.716248,-33.445193],"
+                + "[-70.826111,-33.445193]]]}}]}";
 
-            return new GTVectorDataBinding(features);
-        } catch (Exception e) {
-            throw new RuntimeException("An error has occurred while accessing provided data", e);
-        }
+        Charset charset = StandardCharsets.UTF_8;
+        ByteArrayInputStream input = new ByteArrayInputStream(value.getBytes(charset));
+
+        Data<?> parsedData = this.handler.parse(input(), input, new Format());
+        errors.checkThat(parsedData, is(notNullValue()));
+        errors.checkThat(parsedData, is(notNullValue()));
+        errors.checkThat(parsedData, is(instanceOf(GTVectorDataBinding.class)));
+        errors.checkThat(parsedData.getPayload(), is(instanceOf(SimpleFeatureCollection.class)));
+//        errors.checkThat(parsedData.getPayload().toString(), is(value));
+    }
+
+    private TypedComplexInputDescription input() {
+
+        return descriptionFactory.complexInput()
+                        .withIdentifier("input")
+                        .withDefaultFormat(new Format("application/vnd.geo+json"))
+//                        .withSupportedFormat(new Format(""))
+                        .withType(GTVectorDataBinding.class)
+                        .build();
     }
 
 }
