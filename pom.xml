@@ -463,15 +463,6 @@
                     <generateChildNotices>false</generateChildNotices>
                 </configuration>
                 <executions>
-                    <!--
-                    <execution>
-                        <id>check-notice</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                    -->
                     <execution>
                         <id>generate-notice</id>
                         <phase>initialize</phase>
