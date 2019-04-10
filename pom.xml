@@ -360,6 +360,20 @@
 			<version>1</version>
 		</dependency>
 	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>geotools</id>
+			<name>Geotools Repo</name>
+			<url>http://download.osgeo.org/webdav/geotools</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<build>
 		<resources>
@@ -372,6 +386,31 @@
 			</resource>
 		</resources>
 		<plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireNoRepositories>
+                                    <!-- Allow repositories -->
+                                    <banRepositories>false</banRepositories>
+                                    <!-- Allow SNAPSHOT repositories -->
+                                    <allowSnapshotRepositories>true</allowSnapshotRepositories>
+                                    <!-- Define allowed repositories, use repo id -->
+                                    <allowedRepositories>
+                                        <id>geotools</id>
+                                    </allowedRepositories>
+                                </requireNoRepositories>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
