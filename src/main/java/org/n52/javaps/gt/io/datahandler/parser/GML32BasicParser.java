@@ -231,6 +231,7 @@ public class GML32BasicParser extends AbstractPropertiesInputOutputHandlerForFil
             String schemaUrl = handler.getSchemaUrl();
 
             if (schemaUrl == null) {
+                in.close();
                 return null;
             }
 

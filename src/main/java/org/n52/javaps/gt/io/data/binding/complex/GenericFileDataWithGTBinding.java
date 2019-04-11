@@ -47,7 +47,12 @@
  */
 package org.n52.javaps.gt.io.data.binding.complex;
 
+import java.io.IOException;
+
+import org.apache.commons.io.IOUtils;
 import org.n52.javaps.gt.io.data.GenericFileDataWithGT;
+import org.n52.javaps.gt.io.datahandler.parser.GenericFileDataWithGTParser;
+import org.n52.javaps.io.DecodingException;
 import org.n52.javaps.io.complex.ComplexData;
 
 /**
@@ -72,5 +77,13 @@ public class GenericFileDataWithGTBinding implements ComplexData<GenericFileData
 
     public Class<GenericFileDataWithGT> getSupportedClass() {
         return GenericFileDataWithGT.class;
+    }
+
+    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException {
+        IOUtils.copy(payload.getDataStream(), oos);
+    }
+
+    private void readObject(java.io.ObjectInputStream oos) throws IOException, DecodingException {
+        this.payload = (GenericFileDataWithGT) new GenericFileDataWithGTParser().parse(null, oos, null);
     }
 }

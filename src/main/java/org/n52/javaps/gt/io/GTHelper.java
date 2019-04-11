@@ -514,6 +514,7 @@ public class GTHelper implements ConfigurableClass {
             factory.newSAXParser().parse(inputStream, (DefaultHandler) handler);
             String schemaUrl = handler.getSchemaUrl();
             if (schemaUrl == null) {
+                inputStream.close();
                 return null;
             }
             String localNamespaceURI = handler.getNameSpaceURI();
