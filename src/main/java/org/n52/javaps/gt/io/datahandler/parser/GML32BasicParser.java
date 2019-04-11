@@ -121,12 +121,22 @@ public class GML32BasicParser extends AbstractPropertiesInputOutputHandlerForFil
             throw new IOException(e1.getMessage());
         }
 
-        try (InputStream in = new FileInputStream(tempFile)) {
+        InputStream in = null;
+        try {
+        in = new FileInputStream(tempFile);
 
             QName schematypeTuple = determineFeatureTypeSchema(tempFile);
             return parse(in, schematypeTuple);
         } catch (Exception e) {
             throw new IllegalArgumentException("Error while creating tempFile", e);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                // ignore
+            }
         }
     }
 
@@ -221,7 +231,9 @@ public class GML32BasicParser extends AbstractPropertiesInputOutputHandlerForFil
     }
 
     private QName determineFeatureTypeSchema(File file) {
-        try (InputStream in = new FileInputStream(file)) {
+        InputStream in = null;
+        try {
+        in = new FileInputStream(file);
             GML2Handler handler = new GML2Handler();
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -231,7 +243,6 @@ public class GML32BasicParser extends AbstractPropertiesInputOutputHandlerForFil
             String schemaUrl = handler.getSchemaUrl();
 
             if (schemaUrl == null) {
-                in.close();
                 return null;
             }
 
@@ -243,6 +254,14 @@ public class GML32BasicParser extends AbstractPropertiesInputOutputHandlerForFil
             return new QName(namespaceURI, schemaUrl);
         } catch (SAXException | IOException | ParserConfigurationException e) {
             throw new IllegalArgumentException(e);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                // ignore
+            }
         }
     }
 

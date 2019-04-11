@@ -507,14 +507,15 @@ public class GTHelper implements ConfigurableClass {
     }
 
     public QName determineFeatureTypeSchema(File file) {
-        try (FileInputStream inputStream = new FileInputStream(file)) {
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
             GML2Handler handler = new GML2Handler();
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
             factory.newSAXParser().parse(inputStream, (DefaultHandler) handler);
             String schemaUrl = handler.getSchemaUrl();
             if (schemaUrl == null) {
-                inputStream.close();
                 return null;
             }
             String localNamespaceURI = handler.getNameSpaceURI();
@@ -523,6 +524,14 @@ public class GTHelper implements ConfigurableClass {
         } catch (Exception e) {
             LOGGER.error("Exception while trying to determine schema of FeatureType.", e);
             throw new IllegalArgumentException(e);
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                // ignore
+            }
         }
     }
 
