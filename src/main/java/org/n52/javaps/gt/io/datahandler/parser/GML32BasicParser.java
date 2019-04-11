@@ -93,6 +93,9 @@ import org.xml.sax.SAXException;
         propertyFileName = "gml32basicparser.json")
 public class GML32BasicParser extends AbstractPropertiesInputOutputHandlerForFiles implements InputHandler {
 
+    private static final String IO_EXCEPTION_WHILE_TRYING_TO_CLOSE_INPUTSTREAM =
+            "IOException while trying to close inputstream.";
+
     private static Logger LOGGER = LoggerFactory.getLogger(GML32BasicParser.class);
 
     @Inject
@@ -135,7 +138,7 @@ public class GML32BasicParser extends AbstractPropertiesInputOutputHandlerForFil
                     in.close();
                 }
             } catch (IOException e) {
-                // ignore
+                LOGGER.trace(IO_EXCEPTION_WHILE_TRYING_TO_CLOSE_INPUTSTREAM);
             }
         }
     }
@@ -260,7 +263,7 @@ public class GML32BasicParser extends AbstractPropertiesInputOutputHandlerForFil
                     in.close();
                 }
             } catch (IOException e) {
-                // ignore
+                LOGGER.trace(IO_EXCEPTION_WHILE_TRYING_TO_CLOSE_INPUTSTREAM);
             }
         }
     }

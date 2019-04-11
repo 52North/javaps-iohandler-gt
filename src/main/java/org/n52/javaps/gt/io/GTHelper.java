@@ -530,7 +530,7 @@ public class GTHelper implements ConfigurableClass {
                     inputStream.close();
                 }
             } catch (IOException e) {
-                // ignore
+                LOGGER.trace("IOException while trying to close inputstream.");
             }
         }
     }
