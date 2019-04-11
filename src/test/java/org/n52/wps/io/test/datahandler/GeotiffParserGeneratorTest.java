@@ -74,7 +74,7 @@ public class GeotiffParserGeneratorTest extends AbstractTestCase {
 
         Format format = theParser.getSupportedFormats().iterator().next();
 
-        InputStream input = getClass().getClassLoader().getResourceAsStream("6_UTM2GTIF.TIF");
+        InputStream input = getClass().getClassLoader().getResourceAsStream("6_UTM2GTIF.tif");
 
         GTRasterDataBinding theBinding = null;
         try {

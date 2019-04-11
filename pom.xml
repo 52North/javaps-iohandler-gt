@@ -361,7 +361,18 @@
 		</dependency>
 	</dependencies>
 	
-	<repositories>
+	<repositories>		
+	    <repository>
+			<id>n52-releases</id>
+			<name>52n Releases</name>
+			<url>http://52north.org/maven/repo/releases</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+        </repository>
 		<repository>
 			<id>geotools</id>
 			<name>Geotools Repo</name>
@@ -404,6 +415,7 @@
                                     <!-- Define allowed repositories, use repo id -->
                                     <allowedRepositories>
                                         <id>geotools</id>
+			                            <id>n52-releases</id>
                                     </allowedRepositories>
                                 </requireNoRepositories>
                             </rules>
@@ -451,15 +463,6 @@
                     <generateChildNotices>false</generateChildNotices>
                 </configuration>
                 <executions>
-                    <!--
-                    <execution>
-                        <id>check-notice</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                    -->
                     <execution>
                         <id>generate-notice</id>
                         <phase>initialize</phase>
@@ -531,7 +534,7 @@
                         <artifactId>maven-notice-plugin</artifactId>
                         <configuration>
                             <licenseMapping>
-                                <param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
+                                <param>http://52North.github.io/cdn/licenses/license-mappings.xml</param>
                             </licenseMapping>
                         </configuration>
                     </plugin>
@@ -550,7 +553,7 @@
                         <artifactId>maven-notice-plugin</artifactId>
                         <configuration>
                             <licenseMapping>
-                                <param>http://52north.github.io/cdn/licenses/license-mappings-jdk9.xml</param>
+                                <param>https://52North.github.io/cdn/licenses/license-mappings-jdk9.xml</param>
                             </licenseMapping>
                         </configuration>
                     </plugin>
