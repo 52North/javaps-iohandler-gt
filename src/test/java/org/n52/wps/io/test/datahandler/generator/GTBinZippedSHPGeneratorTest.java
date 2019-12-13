@@ -50,6 +50,7 @@ package org.n52.wps.io.test.datahandler.generator;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -60,6 +61,7 @@ import org.junit.Test;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.javaps.gt.io.datahandler.generator.GTBinZippedSHPGenerator;
 import org.n52.javaps.gt.io.datahandler.parser.GTBinZippedSHPParser;
+import org.n52.javaps.gt.io.datahandler.parser.GeoJSONParser;
 import org.n52.javaps.io.DecodingException;
 import org.n52.javaps.io.EncodingException;
 import org.n52.javaps.test.AbstractTestCase;
@@ -67,14 +69,16 @@ import org.n52.javaps.test.AbstractTestCase;
 public class GTBinZippedSHPGeneratorTest extends AbstractTestCase {
 
     @Inject
-    private GTBinZippedSHPParser theParser;
+    private GeoJSONParser theParser;
+    @Inject
+    private GTBinZippedSHPParser shapeParser;
     @Inject
     private GTBinZippedSHPGenerator dataHandler;
 
     @Test
     public void testParser(){
 
-        InputStream input = getResource("tasmania_roads.zip");
+        InputStream input = getResource("featurecollection.json");
 
             GTVectorDataBinding theBinding = null;
             try {
@@ -88,10 +92,9 @@ public class GTBinZippedSHPGeneratorTest extends AbstractTestCase {
             try {
                 InputStream generatedStream = dataHandler.generate(null, theBinding, null);
 
-                GTVectorDataBinding parsedGeneratedBinding = (GTVectorDataBinding) theParser.parse(null, generatedStream, null);
+                GTVectorDataBinding parsedGeneratedBinding = (GTVectorDataBinding) shapeParser.parse(null, generatedStream, null);
 
                 Assert.assertNotNull(parsedGeneratedBinding.getPayload());
-                Assert.assertTrue(parsedGeneratedBinding.getPayloadAsShpFile().exists());
                 Assert.assertTrue(!parsedGeneratedBinding.getPayload().isEmpty());
 
                 //TODO maybe set format to encoding base64
