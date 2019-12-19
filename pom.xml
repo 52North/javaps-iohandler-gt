@@ -104,7 +104,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
-		<version.geotools>20.2</version.geotools>
+		<version.geotools>20.5</version.geotools>
 		<version.slf4j>1.7.25</version.slf4j>
 		<version.log4j>2.11.1</version.log4j>
         <version.iohandler>1.4.0</version.iohandler>
