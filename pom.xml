@@ -388,6 +388,17 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+		    <id>boundless</id>
+		    <name>Boundless Repo</name>
+		    <url>http://repo.boundlessgeo.com/main/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
 
 	<build>
