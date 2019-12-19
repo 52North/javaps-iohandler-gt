@@ -42,19 +42,18 @@ This project includes:
   error-prone annotations under Apache 2.0
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoJSON Support under Lesser General Public License (LGPL)
-  geolatte-geom under LGPL 3.0
   GeoTIFF grid coverage exchange module under Lesser General Public License (LGPL)
   GML2 XML Support under Lesser General Public License (LGPL)
   GML3 XML Support under Lesser General Public License (LGPL)
   Grid Coverage module under Lesser General Public License (LGPL)
   Guava InternalFutureFailureAccess and InternalFutures under The Apache Software License, Version 2.0
   Guava ListenableFuture only under The Apache Software License, Version 2.0
-  Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
+  Guava: Google Core Libraries for Java under Apache License, Version 2.0
   HyperSQL Database under HSQLDB License, a BSD open source license
-  Image I/O-Extensions - Custom Streams under GNU Lesser General Public License (LGPL)
-  Image I/O-Extensions - GeoCore under GNU Lesser General Public License (LGPL)
-  Image I/O-Extensions - utilities classes and methods under GNU Lesser General Public License (LGPL)
-  Improved TIFF Plugin under BSD license
+  Image I/O-Extensions - Custom Streams under Lesser General Public License (LGPL)
+  Image I/O-Extensions - GeoCore under Lesser General Public License (LGPL)
+  Image I/O-Extensions - utilities classes and methods under Lesser General Public License (LGPL)
+  Improved TIFF Plugin under Lesser General Public License (LGPL)
   J2ObjC Annotations under The Apache Software License, Version 2.0
   Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0
@@ -69,7 +68,7 @@ This project includes:
   JCL 1.2 implemented over SLF4J under MIT License
   JDOM under Similar to Apache License but with the acknowledgment clause removed
   jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
-  Joda-Time under Apache 2
+  Joda-Time under Apache License, Version 2.0
   JSON.simple under The Apache Software License, Version 2.0
   jt-affine under GNU Lesser General Public License (LGPL)
   jt-algebra under GNU Lesser General Public License (LGPL)
@@ -106,6 +105,7 @@ This project includes:
   KML XML Support under Lesser General Public License (LGPL)
   Main module under Lesser General Public License (LGPL)
   Metadata under Lesser General Public License (LGPL)
+  Neo Visionaries Internationalization Package under The Apache Software License, Version 2.0
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   org.eclipse.emf.common under The Eclipse Public License Version 1.0
   org.eclipse.emf.ecore under The Eclipse Public License Version 1.0
@@ -131,6 +131,5 @@ This project includes:
   Units of Measurement Implementation for Java SE under BSD
   vecmath under Sun Binary Code License Agreement
   XML Parsing under Lesser General Public License (LGPL)
-  XmlBeans under The Apache Software License, Version 2.0
   ZonalStats operator under Simplified BSD
 
