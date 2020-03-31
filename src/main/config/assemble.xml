@@ -109,6 +109,7 @@
                 <include>picocontainer:picocontainer</include>
                 <include>org.hsqldb:hsqldb</include>
                 <include>org.apache.httpcomponents:httpcore</include>
+                <include>org.apache.xmlbeans:xmlbeans</include>
 			</includes>
 			<outputDirectory>deploy-to-javaps</outputDirectory>
 		</dependencySet>
