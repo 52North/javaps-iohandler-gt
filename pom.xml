@@ -51,7 +51,7 @@
 	<parent>
 		<groupId>org.n52.wps</groupId>
 		<artifactId>javaPS</artifactId>
-		<version>1.4.0</version>
+		<version>1.5.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.n52.geoprocessing</groupId>
@@ -107,7 +107,7 @@
 		<version.geotools>20.5</version.geotools>
 		<version.slf4j>1.7.25</version.slf4j>
 		<version.log4j>2.11.1</version.log4j>
-        <version.iohandler>1.4.0</version.iohandler>
+        <version.iohandler>2</version.iohandler>
 	</properties>
 
 	<dependencies>
