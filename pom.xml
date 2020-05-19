@@ -378,14 +378,14 @@
 			</snapshots>
         </repository>
 		<repository>
-			<id>geotools</id>
-			<name>Geotools Repo</name>
-			<url>http://download.osgeo.org/webdav/geotools</url>
+            <id>osgeo-release</id>
+            <name>OSGeo Repository</name>
+            <url>https://repo.osgeo.org/repository/release/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
 			<snapshots>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 		<repository>

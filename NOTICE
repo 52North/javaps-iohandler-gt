@@ -58,8 +58,8 @@ This project includes:
   Jackson-core under The Apache Software License, Version 2.0
   jackson-databind under The Apache Software License, Version 2.0
   jai_codec under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
-  jai_core under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   jai_imageio under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
+  Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java implementation of GeographicLib under The MIT License(MIT)
   javaPS Input-/Outputhandler with GeoTools under The Apache Software License, Version 2.0
   javaPS input/output handler under The Apache Software License, Version 2.0
