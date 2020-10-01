@@ -64,7 +64,8 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.gml2.GMLConfiguration;
 import org.geotools.gml3.ApplicationSchemaConfiguration;
-import org.geotools.xml.Configuration;
+import org.geotools.xsd.Configuration;
+import org.geotools.xsd.Parser;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.gt.io.GTHelper;
@@ -129,7 +130,7 @@ public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFile
             shouldSetParserStrict = false;
         }
 
-        org.geotools.xml.Parser parser = new org.geotools.xml.Parser(configuration);
+        Parser parser = new Parser(configuration);
 
         // parse
         SimpleFeatureCollection fc = new DefaultFeatureCollection(null, null);
@@ -141,7 +142,7 @@ public class GML2BasicParser extends AbstractPropertiesInputOutputHandlerForFile
             } catch (SAXException e5) {
                 // assume the xsd containing the schema was not found
                 configuration = new GMLConfiguration();
-                parser = new org.geotools.xml.Parser(configuration);
+                parser = new Parser(configuration);
                 parser.setStrict(false);
                 try {
                     parsedData = parser.parse(new FileInputStream(file));

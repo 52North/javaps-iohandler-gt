@@ -55,7 +55,7 @@ import javax.inject.Inject;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.kml.KMLConfiguration;
-import org.geotools.xml.Configuration;
+import org.geotools.xsd.Configuration;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;

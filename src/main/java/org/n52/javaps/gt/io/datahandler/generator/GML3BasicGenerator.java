@@ -60,7 +60,8 @@ import javax.xml.namespace.QName;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.gml3.ApplicationSchemaConfiguration;
 import org.geotools.gml3.GMLConfiguration;
-import org.geotools.xml.Configuration;
+import org.geotools.xsd.Configuration;
+import org.geotools.xsd.Encoder;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessOutputDescription;
 import org.n52.javaps.gt.io.GTHelper;
@@ -110,13 +111,13 @@ public class GML3BasicGenerator extends AbstractPropertiesInputOutputHandlerForF
         }
 
         Configuration configuration = null;
-        org.geotools.xml.Encoder encoder = null;
+        Encoder encoder = null;
         if (schemaLocation == null || namespace == null) {
             namespace = NS_GML;
             schemaLocation = SCHEMALOCATION_GML311;
             configuration = new GMLConfiguration();
 
-            encoder = new org.geotools.xml.Encoder(configuration);
+            encoder = new Encoder(configuration);
             encoder.setNamespaceAware(true);
             encoder.setSchemaLocation(NS_GML, SCHEMALOCATION_GML311);
 
@@ -124,7 +125,7 @@ public class GML3BasicGenerator extends AbstractPropertiesInputOutputHandlerForF
 
             configuration = new ApplicationSchemaConfiguration(namespace, schemaLocation);
 
-            encoder = new org.geotools.xml.Encoder(configuration);
+            encoder = new Encoder(configuration);
             encoder.setNamespaceAware(true);
             encoder.setSchemaLocation(NS_GML + " " + SCHEMALOCATION_GML311, namespace + " " + schemaLocation);
 

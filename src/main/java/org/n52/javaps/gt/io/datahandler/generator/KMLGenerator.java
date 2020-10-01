@@ -57,8 +57,8 @@ import java.io.OutputStream;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.kml.KML;
 import org.geotools.kml.KMLConfiguration;
-import org.geotools.xml.Configuration;
-import org.geotools.xml.Encoder;
+import org.geotools.xsd.Configuration;
+import org.geotools.xsd.Encoder;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessOutputDescription;
 import org.n52.javaps.gt.io.data.binding.complex.GTVectorDataBinding;
@@ -91,7 +91,7 @@ public class KMLGenerator extends AbstractPropertiesInputOutputHandlerForFiles i
         FeatureCollection<?, ?> fc = ((GTVectorDataBinding) coll).getPayload();
 
         Configuration configuration = new KMLConfiguration();
-        Encoder encoder = new org.geotools.xml.Encoder(configuration);
+        Encoder encoder = new Encoder(configuration);
 
         try {
             encoder.encode(fc, KML.kml, os);

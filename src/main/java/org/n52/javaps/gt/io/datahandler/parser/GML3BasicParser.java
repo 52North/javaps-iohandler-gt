@@ -66,7 +66,8 @@ import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.gml3.ApplicationSchemaConfiguration;
 import org.geotools.gml3.GMLConfiguration;
-import org.geotools.xml.Configuration;
+import org.geotools.xsd.Configuration;
+import org.geotools.xsd.Parser;
 import org.n52.javaps.annotation.Properties;
 import org.n52.javaps.description.TypedProcessInputDescription;
 import org.n52.javaps.gt.io.GTHelper;
@@ -156,7 +157,7 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
             }
         }
 
-        org.geotools.xml.Parser parser = new org.geotools.xml.Parser(configuration);
+        Parser parser = new Parser(configuration);
 
         parser.setStrict(shouldSetParserStrict);
 
@@ -182,7 +183,7 @@ public class GML3BasicParser extends AbstractPropertiesInputOutputHandlerForFile
             Configuration configuration,
             boolean shouldSetParserStrict) {
 
-        org.geotools.xml.Parser parser = new org.geotools.xml.Parser(configuration);
+        Parser parser = new Parser(configuration);
 
         parser.setStrict(shouldSetParserStrict);
 
