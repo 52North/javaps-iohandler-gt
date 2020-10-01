@@ -56,7 +56,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.n52.geoprocessing</groupId>
 	<artifactId>javaps-iohandler-gt</artifactId>
-	<version>3-SNAPSHOT</version>
+	<version>3</version>
 	<name>javaPS Input-/Outputhandler with GeoTools</name>
 
 	<inceptionYear>2016</inceptionYear>
@@ -78,7 +78,7 @@
 		<url>https://github.com/52North/javaps-iohandler-gt</url>
 		<connection>scm:git:git://github.com/52North/javaps-iohandler-gt.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/52North/javaps-iohandler-gt.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>v3</tag>
 	</scm>
 
 	<issueManagement>
