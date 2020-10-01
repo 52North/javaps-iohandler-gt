@@ -51,7 +51,7 @@
 	<parent>
 		<groupId>org.n52.wps</groupId>
 		<artifactId>javaPS</artifactId>
-		<version>1.5.0</version>
+		<version>1.6.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.n52.geoprocessing</groupId>
