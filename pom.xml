@@ -431,7 +431,7 @@
 	    <repository>
 			<id>n52-releases</id>
 			<name>52n Releases</name>
-			<url>http://52north.org/maven/repo/releases</url>
+			<url>https://52north.org/maven/repo/releases</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -453,7 +453,7 @@
 		<repository>
 		    <id>boundless</id>
 		    <name>Boundless Repo</name>
-		    <url>http://repo.boundlessgeo.com/main/</url>
+		    <url>https://repo.boundlessgeo.com/main/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
